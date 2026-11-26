@@ -10,6 +10,17 @@
 <div id="welcome"><div class="panel"><h2>RoseMmoon City</h2><p>Welcome to your pink luxury shopping district. Explore the boulevard and find the RoseMmoon Fashion boutique.</p><button class="btn" id="start">ENTER CITY</button><p class="muted">Use the touch pad to walk. Tap RUN to move faster.</p></div></div>
 <div id="shop"><div class="panel"><h2 id="shopTitle">RoseMmoon</h2><p id="shopTag">Choose your destination</p><p id="shopDescription">Visit one of the two RoseMmoon stores.</p><button class="btn" id="visit">OPEN WEBSITE</button><p><button class="btn" id="back" style="background:#96718a;box-shadow:0 5px #705268">BACK TO CITY</button></p></div></div>
 <div id="hud"><div id="brand">♛ RoseMmoon City</div><div id="hint">Explore the city and find either RoseMmoon boutique</div><div id="pad"><div id="nub"></div></div><div id="actions"><button id="run">RUN</button><button id="jump">JUMP</button></div><button id="enter">ENTER BOUTIQUE</button></div>
+<script>
+/* Prevent browser page zoom on repeated taps, pinch gestures and trackpad zoom. */
+(function(){
+  const stop=e=>e.preventDefault();
+  ['gesturestart','gesturechange','gestureend'].forEach(type=>document.addEventListener(type,stop,{passive:false}));
+  document.addEventListener('dblclick',stop,{passive:false});
+  document.addEventListener('touchstart',e=>{if(e.touches&&e.touches.length>1)stop(e);},{passive:false});
+  document.addEventListener('touchmove',e=>{if(e.touches&&e.touches.length>1)stop(e);},{passive:false});
+  document.addEventListener('wheel',e=>{if(e.ctrlKey||e.metaKey)stop(e);},{passive:false});
+})();
+</script>
 <script type="module">
 import * as THREE from 'three';
 const $=id=>document.getElementById(id),scene=new THREE.Scene();scene.background=new THREE.Color(0xf3c6e1);scene.fog=new THREE.Fog(0xf3c6e1,40,120);
