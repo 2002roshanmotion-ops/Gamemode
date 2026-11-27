@@ -87,7 +87,7 @@ function makeStaticCollider(x,y,z,w,h,d){
 if(CANNON){
  physicsWorld=new CANNON.World({gravity:new CANNON.Vec3(0,-19.62,0)});
  physicsWorld.broadphase=new CANNON.SAPBroadphase(physicsWorld);
- physicsWorld.allowSleep=true;
+ physicsWorld.allowSleep=false; // Keep the player responsive while standing still or restarting movement.
  physicsMaterials.ground=new CANNON.Material('city-ground');
  physicsMaterials.player=new CANNON.Material('player');
  physicsWorld.addContactMaterial(new CANNON.ContactMaterial(physicsMaterials.player,physicsMaterials.ground,{friction:.015,restitution:0}));
@@ -490,7 +490,7 @@ $('enter').onclick=()=>{let fashionDistance=Math.hypot(player.position.x-8,playe
 function loop(now){requestAnimationFrame(loop);if(started)blinkCharacter(playerFaceEyes,playerBlinkState,now);let dt=Math.min((now-last)/1000,.04);last=now;if(started&&!open){let x=input.x+(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0),y=input.y+(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0),len=Math.hypot(x,y);if(len>1){x/=len;y/=len}let moveX=0,moveZ=0;if(len>.06){let sp=input.run?8.5:5;moveX=x*Math.cos(cameraYaw)+y*Math.sin(cameraYaw);moveZ=-x*Math.sin(cameraYaw)+y*Math.cos(cameraYaw);let targetYaw=Math.atan2(moveX,moveZ),angleDelta=Math.atan2(Math.sin(targetYaw-player.rotation.y),Math.cos(targetYaw-player.rotation.y));player.rotation.y+=angleDelta*Math.min(1,dt*12)}let moving=len>.06,walkRate=input.run?12:8,gait=now*.001*walkRate;
 if(physicsWorld&&playerBody){
  const speed=input.run?8.5:5;
- playerBody.velocity.x=moving?moveX*speed:0;playerBody.velocity.z=moving?moveZ*speed:0;if(!moving){playerBody.velocity.x=0;playerBody.velocity.z=0;playerBody.angularVelocity.set(0,0,0)}
+ if(moving)playerBody.wakeUp();playerBody.velocity.x=moving?moveX*speed:0;playerBody.velocity.z=moving?moveZ*speed:0;if(!moving){playerBody.velocity.x=0;playerBody.velocity.z=0;playerBody.angularVelocity.set(0,0,0)}
  if(jumpVelocity>0){playerBody.velocity.y=jumpVelocity;jumpVelocity=0}
  physicsWorld.step(1/60,dt,4);
  player.position.set(playerBody.position.x,Math.max(0,playerBody.position.y-.85),playerBody.position.z);
