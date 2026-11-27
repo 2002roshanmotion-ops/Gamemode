@@ -139,7 +139,47 @@ function signText(title,subtitle,x,y,z,w,h){const canvas=document.createElement(
  gateLogo.position.set(0,9.35,-48.12);scene.add(gateLogo);
  let hlamp=new THREE.PointLight(0xffb4d9,10,18);hlamp.position.set(-8,4,-44);scene.add(hlamp);
 
-// Removed fountain, garden trees, planters and garden props.
+
+// 3D RoseMmoon entrance tunnel just inside the grand gate (walk-through decorative structure).
+{
+ const tunStone=M(0xe9bfd5,.72),tunTrim=M(0xd9a34e,.32,.6),tunInner=M(0x9f668b,.78),tunGlow=M(0xffd8ef,.28,.15);
+ // tunnel extends along the boulevard, with a vaulted-looking segmented ceiling
+ block(1,8.2,17,tunStone,-5,4.1,-39);
+ block(1,8.2,17,tunStone,5,4.1,-39);
+ block(10,1,17,tunInner,0,8.1,-39);
+ block(10.4,.24,17.4,tunTrim,0,8.55,-39);
+ for(let z of [-47,-31]){
+   block(10.4,.35,.45,tunTrim,0,8.25,z);
+   block(.5,8.2,.5,tunTrim,-5,4.1,z);
+   block(.5,8.2,.5,tunTrim,5,4.1,z);
+ }
+ // warm pink ceiling lights, visible in sequence through the tunnel
+ for(let z of [-45,-41,-37,-33]){
+   block(2.2,.12,.38,tunGlow,0,7.55,z);
+   let tl=new THREE.PointLight(0xffc5e5,1.6,9);tl.position.set(0,7.2,z);scene.add(tl);
+ }
+ // decorative arch bands at the entrance and exit
+ for(let z of [-47,-31])for(let x of [-4.65,4.65])block(.18,7.8,.3,tunTrim,x,4,z);
+}
+// Natural green edges around the expanded city: rolling hills, trees, shrubs and meadow clusters.
+{
+ const trunkMat=M(0x76513d),leafMats=[M(0x528b63),M(0x6ba276),M(0x387654),M(0x83b184)],hillMats=[M(0x779b82),M(0x8eaf94),M(0x6c927b)];
+ function tree(x,z,s=1){
+  const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.22*s,.34*s,2.8*s,7),trunkMat);trunk.position.set(x,1.4*s,z);scene.add(trunk);
+  const lm=leafMats[Math.floor(Math.random()*leafMats.length)];
+  for(let j=0;j<3;j++){let crown=new THREE.Mesh(new THREE.ConeGeometry((1.7-j*.28)*s,2.5*s,8),lm);crown.position.set(x,(2.6+j*1.05)*s,z);crown.rotation.y=j*.3;scene.add(crown)}
+  // soft, low shrub ring at selected tree bases
+  if(Math.random()>.5)for(let k=0;k<3;k++)ball(.48*s,leafMats[(k+1)%leafMats.length],x+(Math.random()-.5)*1.5*s,.42*s,z+(Math.random()-.5)*1.5*s,1,.65,1);
+ }
+ // Preserve an open approach opposite the entrance gate; trees are scattered on all other edges.
+ for(let i=0;i<15;i++){let z=-88+i*8.5;if(z<-57||z>-40){tree(-61-Math.random()*4,z,.75+Math.random()*.65);tree(61+Math.random()*4,z,.75+Math.random()*.65)}}
+ for(let i=0;i<17;i++){let x=-64+i*8;if(Math.abs(x)>13){tree(x,-96-Math.random()*4,.8+Math.random()*.7);tree(x,37+Math.random()*4,.8+Math.random()*.7)}}
+ // low rolling green hills outside the playable perimeter, not a flat wall
+ for(let i=0;i<9;i++){let x=-78+i*19;ball(18+Math.random()*8,hillMats[i%3],x,-2,-112-Math.random()*8,1.5,.65,1.15);ball(18+Math.random()*8,hillMats[(i+1)%3],x,-2,55+Math.random()*8,1.5,.65,1.15)}
+ for(let i=0;i<6;i++){let z=-90+i*24;ball(22+Math.random()*7,hillMats[i%3],-88-Math.random()*5,-2,z,1.25,.65,1.2);ball(22+Math.random()*7,hillMats[(i+1)%3],88+Math.random()*5,-2,z,1.25,.65,1.2)}
+}
+
+// Small ornamental garden props replaced by natural perimeter scenery.
 // Expanded luxury shopping district: detailed streets, lighting and architecture
 const sidewalkMat=M(0xd98bb8),roadMat=M(0x8f8291,.92),roadLine=M(0xfff5fa,.8),windowGlow=new THREE.MeshStandardMaterial({color:0xffe4f2,emissive:0xff9bcf,emissiveIntensity:.22,roughness:.25});
 block(5,.12,54,roadMat,0,.02,-30);
