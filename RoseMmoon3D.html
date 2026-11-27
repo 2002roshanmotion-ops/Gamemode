@@ -24,9 +24,37 @@
 <script type="module">
 import * as THREE from 'three';
 const $=id=>document.getElementById(id),scene=new THREE.Scene();scene.background=new THREE.Color(0xf3c6e1);scene.fog=new THREE.Fog(0xf3c6e1,40,120);
+
+// 360-degree illustrated city skyline panorama behind the playable district
+function makeCityPanorama(){
+ const canvas=document.createElement('canvas');canvas.width=4096;canvas.height=1024;
+ const c=canvas.getContext('2d'),W=canvas.width,H=canvas.height;
+ const sky=c.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#8db8df');sky.addColorStop(.38,'#c7c8e8');sky.addColorStop(.68,'#f5c9df');sky.addColorStop(1,'#f7d8e5');c.fillStyle=sky;c.fillRect(0,0,W,H);
+ // soft distant hills behind the skyline
+ for(let layer=0;layer<3;layer++){c.beginPath();let base=H*(.73+layer*.045);c.moveTo(0,H);c.lineTo(0,base);for(let x=0;x<=W;x+=24)c.lineTo(x,base-Math.sin(x*.003+layer*2)*24-Math.sin(x*.011+layer)*11);c.lineTo(W,H);c.closePath();c.fillStyle=['#a5a9c9','#8e91b4','#777c9f'][layer];c.fill()}
+ // continuous 360 city: varied towers, apartment blocks and landmark roofs
+ let x=0,seed=41;const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280};
+ while(x<W){let bw=35+rnd()*105,bh=110+rnd()*260,base=H*.82,top=base-bh;
+  c.fillStyle=['#596b8d','#64718f','#786e91','#8b789a','#536985'][Math.floor(rnd()*5)];
+  c.fillRect(x,top,bw,bh);
+  c.fillStyle='rgba(255,226,239,.38)';c.fillRect(x+3,top+5,bw-6,3);
+  if(rnd()>.55){c.fillStyle='#6a648b';c.fillRect(x+bw*.38,top-18,bw*.24,18)}
+  if(rnd()>.72){c.beginPath();c.moveTo(x,top);c.lineTo(x+bw*.5,top-30-rnd()*28);c.lineTo(x+bw,top);c.fill()}
+  const cols=Math.max(2,Math.floor(bw/13)),rows=Math.floor(bh/20);
+  for(let r=0;r<rows;r++)for(let q=0;q<cols;q++){if(rnd()>.18){c.fillStyle=rnd()>.5?'rgba(255,226,174,.82)':'rgba(195,222,246,.55)';c.fillRect(x+5+q*(bw-10)/cols,top+12+r*20,4,8)}}
+  x+=bw+3;
+ }
+ // a few taller illuminated landmarks spaced around the full panorama
+ for(let i=0;i<16;i++){let px=i*W/16+W/32,hh=290+(i%5)*28;c.fillStyle='#495c80';c.fillRect(px-18,H*.82-hh,36,hh);c.fillStyle='#f8d7a6';for(let yy=H*.82-hh+20;yy<H*.82;yy+=24)c.fillRect(px-5,yy,10,9);c.fillStyle='#786b98';c.beginPath();c.moveTo(px-18,H*.82-hh);c.lineTo(px,H*.82-hh-55);c.lineTo(px+18,H*.82-hh);c.fill()}
+ const tex=new THREE.CanvasTexture(canvas);tex.colorSpace=THREE.SRGBColorSpace;tex.wrapS=THREE.RepeatWrapping;tex.wrapT=THREE.ClampToEdgeWrapping;tex.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());
+ const shell=new THREE.Mesh(new THREE.CylinderGeometry(112,112,76,160,1,true),new THREE.MeshBasicMaterial({map:tex,side:THREE.BackSide, fog:false,depthWrite:false}));
+ shell.position.y=30;scene.add(shell);shell.renderOrder=-10;
+}
+
 const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,220);const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.6));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;document.body.insertBefore(renderer.domElement,$('hud'));
 scene.add(new THREE.HemisphereLight(0xffe9f5,0x8b6b8b,2));const sun=new THREE.DirectionalLight(0xffefd9,2.5);sun.position.set(-15,28,15);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);scene.add(sun);
 const M=(c,r=.7,m=0)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m});
+makeCityPanorama();
 function block(w,h,d,ma,x,y,z){let o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),ma);o.position.set(x,y,z);o.castShadow=true;o.receiveShadow=true;scene.add(o);return o}
 function ball(r,ma,x,y,z,sx=1,sy=1,sz=1){let o=new THREE.Mesh(new THREE.SphereGeometry(r,16,12),ma);o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;scene.add(o);return o}
 const gold=M(0xd9a34e,.3,.65),glass=new THREE.MeshStandardMaterial({color:0xffd9ee,roughness:.18,transparent:true,opacity:.58}),pave=M(0xeac0d9),pink=M(0xf2a8ce);
