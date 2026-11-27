@@ -121,7 +121,33 @@ block(12,8,7,M(0xe9a6c9),-8,4,-27);makeStaticCollider(-8,4,-30.25,12,8,.5);makeS
 for(let x of [-12.3,-3.7])block(.35,7.6,.35,gold,x,4,-23.2);
 for(let x of [-10,-8,-6]){block(1.6,4,.2,glass,x,2.8,-23.2);block(.09,4,.22,gold,x-.83,2.8,-23.1);block(.09,4,.22,gold,x+.83,2.8,-23.1)}
 imageLogo('https://d2ol7oe51mr4n9.cloudfront.net/user_3JYbYCHyy3naSeG6RhPtSZPxh49/398594e4-ceb9-452c-b321-e3b38383fed5.png',2.6,2.6,-10.25,6.8,-23.08);signText('HANDMADE','',-6.35,6.8,-23.08,4.2,1.15);
-function signText(title,subtitle,x,y,z,w,h){const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=320;const ctx=canvas.getContext('2d');ctx.textAlign='center';ctx.shadowColor='rgba(117,22,69,.3)';ctx.shadowBlur=12;ctx.fillStyle='#a51f61';ctx.font='bold 132px Georgia';ctx.fillText(title,512,145);ctx.shadowBlur=0;ctx.fillStyle='#b98232';ctx.font='bold 48px Georgia';ctx.fillText(subtitle,512,235);const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;const material=new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide,toneMapped:false});const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,h),material);mesh.position.set(x,y,z);scene.add(mesh);}let hlamp=new THREE.PointLight(0xffb4d9,10,18);hlamp.position.set(-8,4,-20);scene.add(hlamp);
+function signText(title,subtitle,x,y,z,w,h){const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=320;const ctx=canvas.getContext('2d');ctx.textAlign='center';ctx.shadowColor='rgba(117,22,69,.3)';ctx.shadowBlur=12;ctx.fillStyle='#a51f61';ctx.font='bold 132px Georgia';ctx.fillText(title,512,145);ctx.shadowBlur=0;ctx.fillStyle='#b98232';ctx.font='bold 48px Georgia';ctx.fillText(subtitle,512,235);const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;const material=new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide,toneMapped:false});const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,h),material);mesh.position.set(x,y,z);scene.add(mesh);}
+ // Grand RoseMmoon City entrance gate — open central span keeps the boulevard clear.
+ const gateGold=M(0xd9a34e,.28,.72),gatePink=M(0xe9a1c7,.48,.18),gateStone=M(0xf7e8f0,.72);
+ for(const gx of [-10.5,10.5]){
+  block(2.2,9,2.2,gateStone,gx,4.5,14);
+  block(2.5,.38,2.5,gateGold,gx,8.95,14);
+  block(1.65,.42,1.65,gatePink,gx,9.35,14);
+  block(.32,1.2,.32,gateGold,gx,10.15,14);
+  makeStaticCollider(gx,4.5,14,2.2,9,2.2);
+  for(let gy=2;gy<8;gy+=2)block(2.24,.12,2.24,gateGold,gx,gy,14);
+ }
+ block(22,.85,1.5,gateStone,0,9.35,14);
+ block(22.5,.22,1.8,gateGold,0,9.88,14);
+ block(18,.18,1.35,gatePink,0,8.82,14);
+ // Large centered RoseMmoon wordmark above the road opening.
+ const gateCanvas=document.createElement('canvas');gateCanvas.width=1600;gateCanvas.height=360;
+ const gateCtx=gateCanvas.getContext('2d');gateCtx.clearRect(0,0,1600,360);
+ gateCtx.textAlign='center';gateCtx.textBaseline='middle';
+ gateCtx.shadowColor='rgba(105,25,75,.35)';gateCtx.shadowBlur=18;
+ gateCtx.fillStyle='#9d2868';gateCtx.font='bold 190px Georgia';
+ gateCtx.fillText('♛ RoseMmoon',800,155);
+ gateCtx.shadowBlur=0;gateCtx.fillStyle='#bd8a3b';gateCtx.font='bold 64px Georgia';
+ gateCtx.fillText('LUXURY CITY',800,285);
+ const gateTexture=new THREE.CanvasTexture(gateCanvas);gateTexture.colorSpace=THREE.SRGBColorSpace;
+ const gateLogo=new THREE.Mesh(new THREE.PlaneGeometry(12.5,2.82),new THREE.MeshBasicMaterial({map:gateTexture,transparent:true,side:THREE.DoubleSide,toneMapped:false}));
+ gateLogo.position.set(0,9.35,13.12);scene.add(gateLogo);
+ let hlamp=new THREE.PointLight(0xffb4d9,10,18);hlamp.position.set(-8,4,-20);scene.add(hlamp);
 
 // fountain garden
 let pool=new THREE.Mesh(new THREE.CylinderGeometry(4.2,4.2,.28,40),M(0x8ed3e7,.2,.2));pool.position.set(-20,.32,-35);scene.add(pool);let rim=new THREE.Mesh(new THREE.TorusGeometry(4.2,.22,10,40),M(0xe5c2da));rim.rotation.x=Math.PI/2;rim.position.set(-20,.45,-35);scene.add(rim);for(let [r,y,h] of [[1.4,.8,.45],[.85,1.3,.5],[.28,1.8,.6]]){let f=new THREE.Mesh(new THREE.CylinderGeometry(r*.8,r,h,24),gold);f.position.set(-20,y,-35);scene.add(f)}
