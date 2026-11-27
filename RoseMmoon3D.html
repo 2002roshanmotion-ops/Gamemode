@@ -90,7 +90,7 @@ if(CANNON){
  physicsWorld.allowSleep=true;
  physicsMaterials.ground=new CANNON.Material('city-ground');
  physicsMaterials.player=new CANNON.Material('player');
- physicsWorld.addContactMaterial(new CANNON.ContactMaterial(physicsMaterials.player,physicsMaterials.ground,{friction:.08,restitution:0}));
+ physicsWorld.addContactMaterial(new CANNON.ContactMaterial(physicsMaterials.player,physicsMaterials.ground,{friction:.015,restitution:0}));
  makeStaticCollider(0,-.2, -29,100,.4,130);
  // Invisible city limits keep the character inside the playable district.
  makeStaticCollider(-44,5,-29,.5,10,110);makeStaticCollider(44,5,-29,.5,10,110);
@@ -109,7 +109,7 @@ for(let x of [-8.8,8.8])block(.12,.035,104,pavingGold,x,.105,-29);
 
 for(let i=0;i<8;i++){let m=new THREE.Mesh(new THREE.ConeGeometry(9,20,5),M(i%2?0xaab5df:0x9caad6));m.position.set(-43+i*12,8,-85);scene.add(m)}
 // main RoseMmoon Fashion boutique
-block(13,9,7,M(0xf0a9cc),8,4.5,-27);makeStaticCollider(8,4.5,-27,13,9,7);block(13.5,.4,7.5,gold,8,9,-27);block(6.3,1.7,.25,M(0x96346e),8,7.3,-23.2);
+block(13,9,7,M(0xf0a9cc),8,4.5,-27);makeStaticCollider(8,4.5,-30.25,13,9,.5);makeStaticCollider(1.75,4.5,-27,.5,9,6.5);makeStaticCollider(14.25,4.5,-27,.5,9,6.5);block(13.5,.4,7.5,gold,8,9,-27);block(6.3,1.7,.25,M(0x96346e),8,7.3,-23.2);
 for(let x of [3.2,12.8])block(.4,8.6,.35,gold,x,4.4,-23.2);
 for(let x of [5.3,8,10.7]){block(2.15,4.5,.2,glass,x,3,-23.2);block(.1,4.5,.25,gold,x-1.1,3,-23.1);block(.1,4.5,.25,gold,x+1.1,3,-23.1)}
 let pendingLogoAssets=2;let cityFinishQueued=false;function logoAssetFinished(){pendingLogoAssets=Math.max(0,pendingLogoAssets-1);if(window.__roseLoadProgress)window.__roseLoadProgress(88,'Loading the two store logos…');if(window.__roseCityReady&&pendingLogoAssets===0)finishCityLoading()}const logoLoader=new THREE.TextureLoader();logoLoader.setCrossOrigin('anonymous');function imageLogo(path,maxW,maxH,x,y,z){logoLoader.load(path,texture=>{logoAssetFinished();texture.colorSpace=THREE.SRGBColorSpace;const aspect=texture.image.width/texture.image.height;const w=Math.min(maxW,maxH*aspect),h=w/aspect;const material=new THREE.MeshBasicMaterial({map:texture,color:0xffffff,transparent:true,side:THREE.DoubleSide,toneMapped:false});const logo=new THREE.Mesh(new THREE.PlaneGeometry(w,h),material);logo.position.set(x,y,z);scene.add(logo);},undefined,error=>{console.warn('Logo image could not load:',path,error);logoAssetFinished()});}imageLogo('https://d2ol7oe51mr4n9.cloudfront.net/user_3JYbYCHyy3naSeG6RhPtSZPxh49/e5ee25d3-5140-4aec-96d9-c570362e35c7.png',2.6,2.6,5.9,7.3,-23);signText('FASHION','LET YOUR BEAUTY SPEAK',9.55,7.3,-23.08,3.8,1.15);let lamp=new THREE.PointLight(0xffb4d9,12,20);lamp.position.set(8,4,-20);scene.add(lamp);
@@ -117,7 +117,7 @@ let pendingLogoAssets=2;let cityFinishQueued=false;function logoAssetFinished(){
 for(let i=0;i<4;i++){let z=-12-i*17;if(i===1)continue;block(9,9,9,M([0xe3a6c8,0xd7b3e4,0xf0bfd8,0xc9b8e8][i]),-20,4.5,z);makeStaticCollider(-20,4.5,z,9,9,9);block(9.3,.35,9.3,gold,-20,9.1,z);for(let y=2;y<8;y+=2.5)for(let x=-22;x<=-18;x+=2)block(.9,1.4,.08,glass,x,y,z+4.55)}
 
 // Rosemoon Handmade boutique, across the boulevard from Fashion
-block(12,8,7,M(0xe9a6c9),-8,4,-27);makeStaticCollider(-8,4,-27,12,8,7);block(12.5,.4,7.5,gold,-8,8.2,-27);
+block(12,8,7,M(0xe9a6c9),-8,4,-27);makeStaticCollider(-8,4,-30.25,12,8,.5);makeStaticCollider(-14,4,-27,.5,8,6.5);makeStaticCollider(-2,4,-27,.5,8,6.5);block(12.5,.4,7.5,gold,-8,8.2,-27);
 for(let x of [-12.3,-3.7])block(.35,7.6,.35,gold,x,4,-23.2);
 for(let x of [-10,-8,-6]){block(1.6,4,.2,glass,x,2.8,-23.2);block(.09,4,.22,gold,x-.83,2.8,-23.1);block(.09,4,.22,gold,x+.83,2.8,-23.1)}
 imageLogo('https://d2ol7oe51mr4n9.cloudfront.net/user_3JYbYCHyy3naSeG6RhPtSZPxh49/398594e4-ceb9-452c-b321-e3b38383fed5.png',2.6,2.6,-10.25,6.8,-23.08);signText('HANDMADE','',-6.35,6.8,-23.08,4.2,1.15);
@@ -385,7 +385,7 @@ for(let side of [-1,1]){
 }
 player.position.set(0,0,3);
 if(physicsWorld){
- playerBody=new CANNON.Body({mass:1,material:physicsMaterials.player,linearDamping:.04,angularDamping:1,fixedRotation:true});
+ playerBody=new CANNON.Body({mass:1,material:physicsMaterials.player,linearDamping:.015,angularDamping:1,fixedRotation:true});
  playerBody.addShape(new CANNON.Cylinder(.34,.34,.9,12),new CANNON.Vec3(0,0,0));
  playerBody.addShape(new CANNON.Sphere(.34),new CANNON.Vec3(0,.45,0));
  playerBody.addShape(new CANNON.Sphere(.34),new CANNON.Vec3(0,-.45,0));
