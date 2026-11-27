@@ -554,7 +554,7 @@ const shoeRose=addRose(legPivot,0,-.77,.16,.35);shoeRose.scale.set(.55,.55,.55);
  const forearm=new THREE.Mesh(new THREE.CapsuleGeometry(.052,.19,5,10),skin);forearm.position.y=-.59;armPivot.add(forearm);
  const cuff=new THREE.Mesh(new THREE.TorusGeometry(.055,.012,6,16),M(0xff9fd0,.25,.35));cuff.position.y=-.68;armPivot.add(cuff);
  const palm=new THREE.Mesh(new THREE.SphereGeometry(.075,14,12),skin);palm.position.set(0,-.75,.015);palm.scale.set(.82,1,.58);armPivot.add(palm);
- for(let f=0;f<4;f++){const finger=new THREE.Mesh(new THREE.CapsuleGeometry(.014,.065,4,7),skin);finger.position.set((f-1.5)*.033,-.82,.035);finger.rotation.z=(f-1.5)*-.1;armPivot.add(finger)}
+ for(let f=0;f<4;f++){const finger=new THREE.Mesh(new THREE.CapsuleGeometry(.014,.065,4,7),skin);finger.position.set((f-1.5)*.033,-.82,.035);finger.rotation.z=(f-1.5)*-.1;armPivot.add(finger);const nail=new THREE.Mesh(new THREE.SphereGeometry(.009,8,6),M(0xffd2e5,.25));nail.position.set((f-1.5)*.033,-.79,.047);nail.scale.set(.7,.8,.45);armPivot.add(nail)}
  const thumb=new THREE.Mesh(new THREE.CapsuleGeometry(.016,.055,4,7),skin);thumb.position.set(side*.075,-.77,.045);thumb.rotation.z=side*-.65;armPivot.add(thumb);
  limbs.push({legPivot,armPivot,side});
 }
