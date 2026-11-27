@@ -103,7 +103,7 @@ block(130,.3,130,pave,0,-.2,-30);
 // main RoseMmoon Fashion boutique — hollow interior, glazed front, and welcoming forecourt
 makeShopShell(11,5.5,-27,12.5,11,8.5,3.05,0xf0a9cc);
 makeShopInterior(11,-27,12.1,8.1,0xffe2f1);
-makeShopForecourt(11,-18.1,13.5,8.2);
+makeShopForecourt(11,-18.3,13.5,9.0);
 const fashionDoors=makeShopDoors(11,2.35,-22.58);
 function makeShopShell(cx,cy,cz,w,h,d,wallColor){
  const wall=M(wallColor,.72),floor=M(0xffe4f1,.55),roof=M(0xd9a34e,.32,.45),glassPanel=new THREE.MeshStandardMaterial({color:0xffd9ee,roughness:.18,transparent:true,opacity:.5});
@@ -114,6 +114,9 @@ function makeShopShell(cx,cy,cz,w,h,d,wallColor){
  // Front wall segments leave a clear 3.05m doorway.
  const segW=(w-3.05)/2;
  block(segW,h,.28,wall,cx-w/2+segW/2,cy,front-.14);block(segW,h,.28,wall,cx+w/2-segW/2,cy,front-.14);
+ // Physical colliders match the wall geometry; the center doorway is intentionally clear.
+ makeStaticCollider(cx-w/2+.14,cy,cz,.28,h,d);makeStaticCollider(cx+w/2-.14,cy,cz,.28,h,d);makeStaticCollider(cx,cy,back+.14,w,h,.28);
+ makeStaticCollider(cx-w/2+segW/2,cy,front-.14,segW,h,.28);makeStaticCollider(cx+w/2-segW/2,cy,front-.14,segW,h,.28);
  // Glazed display windows with opaque lintels/sills and narrow gold mullions.
  for(const side of [-1,1]){
   const wx=cx+side*3.55,wy=cy-.65;
@@ -170,7 +173,7 @@ let pendingLogoAssets=2;let cityFinishQueued=false;function logoAssetFinished(){
 // Rosemoon Handmade boutique, across the boulevard from Fashion — hollow interior and forecourt
 makeShopShell(-11,5,-27,12.5,10,8.5,3.05,0xe9a6c9);
 makeShopInterior(-11,-27,12.1,8.1,0xfff0f5);
-makeShopForecourt(-11,-18.1,13.5,8.2);
+makeShopForecourt(-11,-18.3,13.5,9.0);
 const handmadeDoors=makeShopDoors(-11,2.25,-22.58);
 signText('HANDMADE','',-11,10.35,-22.62,8.2,1.55);imageLogo('https://d2ol7oe51mr4n9.cloudfront.net/user_3JYbYCHyy3naSeG6RhPtSZPxh49/398594e4-ceb9-452c321-e3b38383fed5.png',6.2,5.8,-11,6.5,-22.6);
 function signText(title,subtitle,x,y,z,w,h){const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=320;const ctx=canvas.getContext('2d');ctx.textAlign='center';ctx.shadowColor='rgba(117,22,69,.3)';ctx.shadowBlur=12;ctx.fillStyle='#a51f61';ctx.font='bold 132px Georgia';ctx.fillText(title,512,145);ctx.shadowBlur=0;ctx.fillStyle='#b98232';ctx.font='bold 48px Georgia';ctx.fillText(subtitle,512,235);const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;const material=new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide,toneMapped:false});const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,h),material);mesh.position.set(x,y,z);scene.add(mesh);}
