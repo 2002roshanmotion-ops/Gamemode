@@ -459,27 +459,44 @@ let limbs=[];for(let side of [-1,1]){
 }scene.add(g);return {g,body,limbs,faceEyes,blinkState:{nextBlink:performance.now()+Math.random()*2500,blinkStart:0},phase:Math.random()*Math.PI*2,originX:x,originZ:z,direction:Math.random()<.5?-1:1,speed:.28+Math.random()*.12,range:5}}
 let women=[];for(let i=0;i<4;i++)women.push(npc(i%2===0?-3.7:3.7,-15-Math.floor(i/2)*18));
 // Main character 3D stand-in for the first playable build
-const player=new THREE.Group();scene.add(player);const playerRig=new THREE.Group();player.add(playerRig);const skin=M(0xffd0bd),hair=M(0x422236),outfit=M(0xe92389),boots=M(0x99145e,.3,.2),iris=M(0x8b3f75,.22,.05);
+// Anime-style character parts: shared rose materials, a rose builder and long wavy hair strands.
+let ROSE_MATS=null;
+function addRose(parent,x,y,z,s=1,ry=0){
+ if(!ROSE_MATS)ROSE_MATS={deep:M(0xc4125e,.4,.05),mid:M(0xff1f78,.35,.05),light:M(0xff6aa6,.35,.05)};
+ const g=new THREE.Group();g.position.set(x,y,z);g.rotation.y=ry;parent.add(g);
+ g.add(new THREE.Mesh(new THREE.SphereGeometry(.035*s,10,8),ROSE_MATS.deep));
+ for(let k=0;k<5;k++){const a=k/5*Math.PI*2;const p=new THREE.Mesh(new THREE.SphereGeometry(.04*s,10,8),k%2?ROSE_MATS.mid:ROSE_MATS.light);p.position.set(Math.cos(a)*.04*s,Math.sin(a)*.04*s,.008*s);p.scale.set(1,1,.55);g.add(p)}
+ return g;
+}
+function hairStrand(pts,r,mat){const m=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),36,r,6,false),mat);m.castShadow=true;playerRig.add(m);return m}
+const player=new THREE.Group();scene.add(player);const playerRig=new THREE.Group();player.add(playerRig);const skin=M(0xffd0bd),hair=M(0x6e3a26,.42,.08),outfit=M(0xe92389),boots=M(0xf0237f,.2,.35),iris=M(0x8b3f75,.22,.05);
 function part(geo,ma,x,y,z,sx=1,sy=1,sz=1){let o=new THREE.Mesh(geo,ma);o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;playerRig.add(o);return o}
 // Detailed full-body player model with layered outfit, articulated limbs, hands and shoes.
-const bodyBase=part(new THREE.CapsuleGeometry(.255,.53,7,16),outfit,0,1.32,0,1,1.05,.9);
+const bodyBase=part(new THREE.CapsuleGeometry(.255,.53,7,16),skin,0,1.32,0,1,1.05,.9);
 part(new THREE.CylinderGeometry(.075,.085,.17,16),skin,0,1.72,0);
-part(new THREE.SphereGeometry(.16,20,14),outfit,0,1.57,0,1.2,.72,.9);
 const seamMat=M(0xffb7dc,.45),goldTrim=M(0xe9bd78,.35,.55),darkPink=M(0xb91569,.35,.12);
 part(new THREE.TorusGeometry(.245,.025,8,32),goldTrim,0,1.03,0,1,.8,.9);
 part(new THREE.TorusGeometry(.235,.018,8,32),seamMat,0,1.48,0,1,.8,.9);
 part(new THREE.SphereGeometry(.055,14,10),goldTrim,0,1.4,.235,1,1, .5);
 for(let side of [-1,1]){
- part(new THREE.SphereGeometry(.075,14,10),outfit,side*.27,1.48,0,1.15,1,.9);
+ part(new THREE.SphereGeometry(.075,14,10),skin,side*.27,1.48,0,1.15,1,.9);
  // jacket piping and decorative buttons
  part(new THREE.SphereGeometry(.018,10,8),goldTrim,side*.065,1.34,.235);
  part(new THREE.SphereGeometry(.018,10,8),goldTrim,side*.065,1.22,.235);
 }
-const skirt=part(new THREE.ConeGeometry(.48,.62,20),outfit,0,.83,0,1,.92,1);
-const overskirt=part(new THREE.ConeGeometry(.485,.48,20),M(0xff79b9),0,.84,.018,1,.95,1);
-for(let i=0;i<12;i++){let a=i*Math.PI*2/12;let pleat=part(new THREE.BoxGeometry(.018,.36,.018),seamMat,Math.sin(a)*.31,.78,Math.cos(a)*.31);pleat.rotation.y=a}
-part(new THREE.TorusGeometry(.34,.025,8,28),goldTrim,0,1.08,0,1,.55,1);
+const skirt=part(new THREE.ConeGeometry(.42,.5,20),outfit,0,.9,0,1,.92,1);
+const overskirt=part(new THREE.ConeGeometry(.425,.46,20),M(0xff79b9),0,.9,.018,1,.95,1);
+for(let i=0;i<12;i++){let a=i*Math.PI*2/12;let pleat=part(new THREE.BoxGeometry(.018,.3,.018),seamMat,Math.sin(a)*.2,.9,Math.cos(a)*.2);pleat.rotation.y=a}
+part(new THREE.TorusGeometry(.42,.025,8,28),goldTrim,0,.66,0,1,.55,1);
+addRose(playerRig,.26,.72,.2,.75,-.6);
 part(new THREE.SphereGeometry(.09,16,12),M(0xffd5e8),0,1.55,.16,1.3,.65,.65);
+// Off-shoulder satin bustier with a rose bow, a bare midriff, and a necklace
+const satin=M(0xff3d9a,.3,.1);
+const bust=new THREE.Mesh(new THREE.SphereGeometry(.27,24,18),satin);bust.position.set(0,1.45,.03);bust.scale.set(1.12,.95,.96);bust.castShadow=true;playerRig.add(bust);
+for(const side of [-1,1]){const loop=new THREE.Mesh(new THREE.SphereGeometry(.07,12,8),satin);loop.position.set(side*.1,1.4,.27);loop.scale.set(1.5,.8,.45);loop.rotation.z=side*-.35;playerRig.add(loop)}
+addRose(playerRig,0,1.4,.3,1.2);
+const necklace=new THREE.Mesh(new THREE.TorusGeometry(.105,.008,6,24),goldTrim);necklace.rotation.x=Math.PI/2;necklace.position.set(0,1.64,0);playerRig.add(necklace);
+part(new THREE.SphereGeometry(.028,10,8),M(0xff9fd0,.2,.4),0,1.56,.24);
 // Visible front-facing anime face base; unlit skin keeps the face from turning black in mobile lighting.
 const faceBase=new THREE.Mesh(new THREE.SphereGeometry(.255,24,20),new THREE.MeshBasicMaterial({color:0xffd0bd}));
 faceBase.position.set(0,2.075,.105);faceBase.scale.set(.78,1.02,.58);playerRig.add(faceBase);
@@ -495,23 +512,37 @@ for(const side of [-1,1]){
 part(new THREE.SphereGeometry(.13,18,12),hair,-.105,2.245,.105,1.15,.58,.8);
 part(new THREE.SphereGeometry(.13,18,12),hair,.045,2.25,.11,1.1,.55,.8);
 part(new THREE.SphereGeometry(.095,16,12),hair,.16,2.205,.105,1,.7,.75);
-part(new THREE.SphereGeometry(.13,14,10),M(0xff238c),.29,2.3,.02);
+// Long wavy brown hair past the shoulders, lighter highlight strands and front locks, and a pink rose hair flower.
+const hairHi=M(0xa45d34,.38,.08);
+for(let i=0;i<9;i++){
+ const u=i/8-.5,mat=i%3===0?hairHi:hair,pts=[];
+ for(let k=0;k<=6;k++){const t=k/6;pts.push(new THREE.Vector3(u*.5*(1+t*.9)+Math.sin(t*8+i*1.3)*.05*(.3+t),2.2-t*1.28,-.36-t*.1))}
+ hairStrand(pts,.034-Math.abs(u)*.01,mat);
+}
+for(const side of [-1,1])for(let j=0;j<2;j++){
+ const z0=.08+j*.05,mat=j?hairHi:hair,pts=[];
+ for(let k=0;k<=10;k++){const t=k/10;pts.push(new THREE.Vector3(side*(.22+t*.2+Math.sin(t*11+j*2)*.03),2.12-t*1.2,z0+t*.1))}
+ hairStrand(pts,.03,mat);
+}
+addRose(playerRig,.3,2.27,.06,1.15,.4);
 const limbs=[];
 for(let side of [-1,1]){
  const legPivot=new THREE.Group();legPivot.position.set(side*.16,.72,0);playerRig.add(legPivot);
  const thigh=new THREE.Mesh(new THREE.CapsuleGeometry(.09,.25,5,10),skin);thigh.position.y=-.19;thigh.castShadow=true;legPivot.add(thigh);
  const knee=new THREE.Mesh(new THREE.SphereGeometry(.085,14,10),skin);knee.position.y=-.38;legPivot.add(knee);
  const calf=new THREE.Mesh(new THREE.CapsuleGeometry(.07,.28,5,10),skin);calf.position.y=-.56;calf.castShadow=true;legPivot.add(calf);
- const boot=new THREE.Mesh(new THREE.CylinderGeometry(.105,.14,.28,14),boots);boot.position.set(0,-.78,.015);boot.castShadow=true;legPivot.add(boot);
+ const boot=new THREE.Mesh(new THREE.CylinderGeometry(.11,.13,.46,14),boots);boot.position.set(0,-.61,.015);boot.castShadow=true;legPivot.add(boot);
  const sole=new THREE.Mesh(new THREE.CylinderGeometry(.12,.145,.055,14),darkPink);sole.position.set(0,-.925,.02);legPivot.add(sole);
+ const heel=new THREE.Mesh(new THREE.CylinderGeometry(.022,.03,.16,8),darkPink);heel.position.set(0,-.875,-.075);legPivot.add(heel);
+ addRose(legPivot,0,-.5,.14,.6);
  const toe=new THREE.Mesh(new THREE.SphereGeometry(.105,14,10),boots);toe.position.set(0,-.83,.095);toe.scale.set(1,.55,1.35);legPivot.add(toe);
  const armPivot=new THREE.Group();armPivot.position.set(side*.36,1.62,0);playerRig.add(armPivot);
- const shoulder=new THREE.Mesh(new THREE.SphereGeometry(.13,16,12),outfit);shoulder.position.y=-.035;armPivot.add(shoulder);
- const sleeve=new THREE.Mesh(new THREE.CapsuleGeometry(.095,.2,5,10),outfit);sleeve.position.y=-.16;armPivot.add(sleeve);
+ const shoulder=new THREE.Mesh(new THREE.SphereGeometry(.13,16,12),skin);shoulder.position.y=-.035;armPivot.add(shoulder);
+ const sleeve=new THREE.Mesh(new THREE.CapsuleGeometry(.095,.2,5,10),skin);sleeve.position.y=-.16;armPivot.add(sleeve);
  const upperArm=new THREE.Mesh(new THREE.CapsuleGeometry(.065,.19,5,10),skin);upperArm.position.y=-.34;armPivot.add(upperArm);
  const elbow=new THREE.Mesh(new THREE.SphereGeometry(.065,12,10),skin);elbow.position.y=-.47;armPivot.add(elbow);
  const forearm=new THREE.Mesh(new THREE.CapsuleGeometry(.052,.19,5,10),skin);forearm.position.y=-.59;armPivot.add(forearm);
- const cuff=new THREE.Mesh(new THREE.TorusGeometry(.055,.012,6,16),goldTrim);cuff.position.y=-.68;armPivot.add(cuff);
+ const cuff=new THREE.Mesh(new THREE.TorusGeometry(.055,.012,6,16),M(0xff9fd0,.25,.35));cuff.position.y=-.68;armPivot.add(cuff);
  const palm=new THREE.Mesh(new THREE.SphereGeometry(.075,14,12),skin);palm.position.set(0,-.75,.015);palm.scale.set(.82,1,.58);armPivot.add(palm);
  for(let f=0;f<4;f++){const finger=new THREE.Mesh(new THREE.CapsuleGeometry(.014,.065,4,7),skin);finger.position.set((f-1.5)*.033,-.82,.035);finger.rotation.z=(f-1.5)*-.1;armPivot.add(finger)}
  const thumb=new THREE.Mesh(new THREE.CapsuleGeometry(.016,.055,4,7),skin);thumb.position.set(side*.075,-.77,.045);thumb.rotation.z=side*-.65;armPivot.add(thumb);
