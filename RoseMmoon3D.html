@@ -148,13 +148,16 @@ const sidewalkMat=M(0xd98bb8),roadMat=M(0x8f8291,.92),roadLine=M(0xfff5fa,.8),wi
  // A continuous road and pedestrian paths pass through the full tunnel length.
  block(5,.12,58,roadMat,0,.02,-84);
  block(2.4,.16,58,sidewalkMat,-3.7,.1,-84);block(2.4,.16,58,sidewalkMat,3.7,.1,-84);
- // Clearly visible natural-rock entrance portal, framing the open drive-through.
- const portal=new THREE.Mesh(new THREE.TorusGeometry(7.1,1.45,10,28),rockLight);
- portal.position.set(0,6.9,-69.2);portal.castShadow=true;portal.receiveShadow=true;scene.add(portal);
- ball(5.4,rock,-9.2,3.5,-69.2,1.1,1.2,1.25);
- ball(5.4,rock,9.2,3.5,-69.2,1.1,1.2,1.25);
- ball(7.5,rockLight,0,13.1,-69.2,1.05,.55,1.2);
- // Entrance interior is dark enough to read as a hollow passage, not a rock wall.
+ // Natural rock face around a wide, uneven hollow—no artificial arch or ring.
+ // Keep the central drive opening clear; build rough rock shoulders and an overhang.
+ ball(8.5,rock,-10.1,3.1,-69.5,1.15,1.15,1.3);
+ ball(7.2,rockLight,-9.1,6.1,-70.2,1.05,1.1,1.2);
+ ball(8.2,rock,10.2,3.5,-69.5,1.2,1.2,1.25);
+ ball(6.8,rockLight,9.1,6.4,-70.1,1.1,1.1,1.2);
+ ball(9.2,rock, -5.9,10.7,-70.4,1.15,.72,1.3);
+ ball(10.5,rockLight,0,12.1,-70.7,1.25,.62,1.25);
+ ball(9.4,rock,6.4,10.6,-70.3,1.15,.75,1.3);
+ // Shadowed tunnel ceiling; the road remains open below through the hill.
  block(10,.3,58,inside,0,11.65,-84);
  // Large irregular hillside shoulders leave a clear road-width opening in the middle.
  for(let i=0;i<8;i++){
