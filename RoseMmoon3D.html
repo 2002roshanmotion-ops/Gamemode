@@ -141,6 +141,7 @@ function signText(title,subtitle,x,y,z,w,h){const canvas=document.createElement(
  let hlamp=new THREE.PointLight(0xffb4d9,10,18);hlamp.position.set(-8,4,-44);scene.add(hlamp);
 
 
+const sidewalkMat=M(0xd98bb8),roadMat=M(0x8f8291,.92),roadLine=M(0xfff5fa,.8),windowGlow=new THREE.MeshStandardMaterial({color:0xffe4f2,emissive:0xff9bcf,emissiveIntensity:.22,roughness:.25});
 // Hill tunnel beyond the gate: a natural rock opening through the surrounding hills.
 {
  const rock=M(0x817d8b,.95),rockLight=M(0x9b96a3,.9),inside=M(0x45424f,.98),edge=M(0x706b79,.95),pinkGlow=M(0xffc8e8,.28,.12);
@@ -190,7 +191,7 @@ function signText(title,subtitle,x,y,z,w,h){const canvas=document.createElement(
 
 // Small ornamental garden props replaced by natural perimeter scenery.
 // Expanded luxury shopping district: detailed streets, lighting and architecture
-const sidewalkMat=M(0xd98bb8),roadMat=M(0x8f8291,.92),roadLine=M(0xfff5fa,.8),windowGlow=new THREE.MeshStandardMaterial({color:0xffe4f2,emissive:0xff9bcf,emissiveIntensity:.22,roughness:.25});
+
 block(5,.12,54,roadMat,0,.02,-30);
 block(2.4,.16,54,sidewalkMat,-3.7,.1,-30);block(2.4,.16,54,sidewalkMat,3.7,.1,-30);
 // Keep a single straight central boulevard; remove both cross streets and their sidewalks.
