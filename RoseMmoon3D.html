@@ -345,10 +345,14 @@ let pinchDistance=0,touchLookId=null,touchLookX=0,touchLookY=0;
 const touchGap=touches=>Math.hypot(touches[0].clientX-touches[1].clientX,touches[0].clientY-touches[1].clientY);
 document.addEventListener('touchstart',e=>{
  if(e.target.closest&&e.target.closest('#pad,#run,#jump,#enter,#settings,#settingsBtn,#shop,#welcome'))return;
+ // Holding the movement joystick disables pinch zoom until it is released.
+ if(pid!==null){pinchDistance=0;return}
  if(e.touches.length===2){touchLookId=null;lookPointer=null;pinchDistance=touchGap(e.touches)}
  else if(e.touches.length===1){const t=e.touches[0];if(t.clientX>window.innerWidth*.42){touchLookId=t.identifier;touchLookX=t.clientX;touchLookY=t.clientY}}
 },{passive:false,capture:true});
 document.addEventListener('touchmove',e=>{
+ // Never interpret the joystick finger plus another finger as a zoom gesture.
+ if(pid!==null){pinchDistance=0;return}
  if(e.touches.length===2){e.preventDefault();touchLookId=null;const next=touchGap(e.touches);if(pinchDistance>0)changeZoom((pinchDistance-next)*.035);pinchDistance=next;lookPointer=null}
  else if(e.touches.length===1&&touchLookId!==null){const t=Array.from(e.touches).find(v=>v.identifier===touchLookId);if(t){e.preventDefault();cameraYaw-=(t.clientX-touchLookX)*cameraSensitivity;cameraPitch+=(t.clientY-touchLookY)*cameraSensitivity*(invertCameraY?-1:1);cameraPitch=THREE.MathUtils.clamp(cameraPitch,-.08,1.25);touchLookX=t.clientX;touchLookY=t.clientY}}
 },{passive:false,capture:true});
