@@ -96,7 +96,7 @@ if(CANNON){
  makeStaticCollider(-44,5,-29,.5,10,110);makeStaticCollider(44,5,-29,.5,10,110);
  makeStaticCollider(0,5,-82,36,10,.5);makeStaticCollider(0,5,24,36,10,.5);
 }
-const gold=M(0xd9a34e,.3,.65),glass=new THREE.MeshStandardMaterial({color:0xffd9ee,roughness:.18,transparent:true,opacity:.58}),pave=M(0xeac0d9),pink=M(0xf2a8ce);
+const gold=M(0xd9a34e,.3,.65),glass=new THREE.MeshStandardMaterial({color:0xffd9ee,roughness:.18,transparent:true,opacity:.58}),pave=M(0xd987b2),pink=M(0xf2a8ce);
 block(92,.3,112,pave,0,-.2,-29);
 // Remove the pale carpet slab and decorative pavement tiles; leave the pink ground and walkways.
 
@@ -113,7 +113,7 @@ for(let i=0;i<4;i++){let z=-12-i*17;if(i===1)continue;block(9,9,9,M([0xe3a6c8,0x
 block(12.5,10,8.5,M(0xe9a6c9),-11,5,-27);makeStaticCollider(-11,5,-31.25,12.5,10,.5);makeStaticCollider(-17.25,5,-27,.5,10,8);makeStaticCollider(-4.75,5,-27,.5,10,8);block(13,.4,9,gold,-11,10,-27);
 for(let x of [-17,-5])block(.4,9.6,.35,gold,x,4.9,-22.75);
 for(let x of [-14.5,-11,-7.5]){block(2.8,5.2,.2,glass,x,3.3,-22.75);block(.1,5.2,.22,gold,x-1.45,3.3,-22.65);block(.1,5.2,.22,gold,x+1.45,3.3,-22.65)}
-imageLogo('https://d2ol7oe51mr4n9.cloudfront.net/user_3JYbYCHyy3naSeG6RhPtSZPxh49/398594e4-ceb9-452c321-e3b38383fed5.png',5.2,5.2,-11,6.6,-22.6);signText('HANDMADE','',-11,11.5,-22.62,8.2,1.55);
+imageLogo('https://d2ol7oe51mr4n9.cloudfront.net/user_3JYbYCHyy3naSeG6RhPtSZPxh49/398594e4-ceb9-452c321-e3b38383fed5.png',6.2,5.8,-11,6.35,-22.6);signText('HANDMADE','',-11,11.5,-22.62,8.2,1.55);
 function signText(title,subtitle,x,y,z,w,h){const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=320;const ctx=canvas.getContext('2d');ctx.textAlign='center';ctx.shadowColor='rgba(117,22,69,.3)';ctx.shadowBlur=12;ctx.fillStyle='#a51f61';ctx.font='bold 132px Georgia';ctx.fillText(title,512,145);ctx.shadowBlur=0;ctx.fillStyle='#b98232';ctx.font='bold 48px Georgia';ctx.fillText(subtitle,512,235);const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;const material=new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide,toneMapped:false});const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,h),material);mesh.position.set(x,y,z);scene.add(mesh);}
  // Grand RoseMmoon City entrance gate — open central span keeps the boulevard clear.
  const gateGold=M(0xd9a34e,.28,.72),gatePink=M(0xe9a1c7,.48,.18),gateStone=M(0xf7e8f0,.72);
