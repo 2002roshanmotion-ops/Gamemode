@@ -30,30 +30,7 @@ function makeCityPanorama(){
  const canvas=document.createElement('canvas');canvas.width=4096;canvas.height=1024;
  const c=canvas.getContext('2d'),W=canvas.width,H=canvas.height;
  const sky=c.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#8db8df');sky.addColorStop(.38,'#c7c8e8');sky.addColorStop(.68,'#f5c9df');sky.addColorStop(1,'#f7d8e5');c.fillStyle=sky;c.fillRect(0,0,W,H);
- // soft distant hills behind the skyline
- for(let layer=0;layer<3;layer++){c.beginPath();let base=H*(.73+layer*.045);c.moveTo(0,H);c.lineTo(0,base);for(let x=0;x<=W;x+=24)c.lineTo(x,base-Math.sin(x*.003+layer*2)*24-Math.sin(x*.011+layer)*11);c.lineTo(W,H);c.closePath();c.fillStyle=['#a5a9c9','#8e91b4','#777c9f'][layer];c.fill()}
- // Full 360 mountain ranges: layered peaks rise behind the whole city to close empty horizon gaps
- for(let layer=0;layer<3;layer++){
-  const base=H*(.79+layer*.035),step=layer===0?150:layer===1?190:230,offset=layer*71;
-  c.beginPath();c.moveTo(0,H);c.lineTo(0,base);
-  for(let px=0;px<=W+step;px+=step){
-   const center=px+offset,peak=H*(.22+layer*.105)+((Math.sin(px*.017+layer*2)+1)*.045*H);
-   const half=step*(.42+(Math.sin(px*.031+layer)*.08));
-   c.lineTo(center-half,base-18);c.lineTo(center,peak);c.lineTo(center+half,base-12);
-  }
-  c.lineTo(W,H);c.closePath();
-  const mountainShade=c.createLinearGradient(0,H*.2,0,H);
-  mountainShade.addColorStop(0,['#8196bb','#8994b5','#8589aa'][layer]);
-  mountainShade.addColorStop(1,['#9ba5c5','#a5a2bd','#aaa0b7'][layer]);
-  c.fillStyle=mountainShade;c.fill();
-  // pale pink snow caps catch the sunset light on the tallest ridges
-  for(let px=0;px<=W+step;px+=step){
-   const center=px+offset,peak=H*(.22+layer*.105)+((Math.sin(px*.017+layer*2)+1)*.045*H);
-   const half=step*(.42+(Math.sin(px*.031+layer)*.08));
-   c.beginPath();c.moveTo(center-half*.23,peak+(base-peak)*.28);c.lineTo(center,peak);c.lineTo(center+half*.24,peak+(base-peak)*.3);c.lineTo(center+half*.08,peak+(base-peak)*.25);c.lineTo(center,peak+(base-peak)*.36);c.lineTo(center-half*.08,peak+(base-peak)*.25);c.closePath();
-   c.fillStyle=['rgba(255,246,250,.92)','rgba(244,228,245,.72)','rgba(238,218,239,.55)'][layer];c.fill();
-  }
- }
+ // Keep the skyline clear; the surrounding mountains are real 3D terrain meshes in the world.
  // continuous 360 city: varied towers, apartment blocks and landmark roofs
  let x=0,seed=41;const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280};
  while(x<W){let bw=35+rnd()*105,bh=110+rnd()*260,base=H*.82,top=base-bh;
@@ -131,6 +108,45 @@ function flowerBed(x,z){block(3.5,.45,1.5,M(0xf8dce9),x,.24,z);for(let i=0;i<13;
 for(let z=-64;z<8;z+=16){flowerBed(-8.3,z);flowerBed(8.3,z+7)}
 for(let i=0;i<9;i++){let x=-42+i*10,z=-91-(i%3)*5,h=14+(i%4)*5,w=6+(i%3)*2;detailedBuilding(x,z,w,h,7,districtColors[i%districtColors.length],i)}
 const clouds=[];for(let i=0;i<7;i++){let cloud=new THREE.Group();for(let j=0;j<4;j++){let puff=new THREE.Mesh(new THREE.SphereGeometry(1.8+j%2*.35,12,10),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.46,depthWrite:false}));puff.position.set(j*1.7,Math.sin(j)*.35,0);cloud.add(puff)}cloud.position.set(-38+i*13,27+(i%3)*2,-52-(i%2)*24);scene.add(cloud);clouds.push(cloud)}
+
+// Real 3D mountain terrain surrounding the outer edge of the city
+function buildMountain(x,z,radius,height,seed,shade){
+ const sides=7+(seed%3),geo=new THREE.ConeGeometry(radius,height,sides,5);
+ const pos=geo.attributes.position;
+ for(let i=0;i<pos.count;i++){
+  const y=pos.getY(i),xx=pos.getX(i),zz=pos.getZ(i);
+  const n=Math.sin((i+seed)*12.9898)*Math.cos((i+seed)*4.1414);
+  if(y>-height*.48){pos.setX(i,xx*(1+n*.075));pos.setZ(i,zz*(1+n*.075));}
+  if(y<height*.15){pos.setY(i,y+n*height*.035);}
+ }
+ geo.computeVertexNormals();
+ const rock=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:shade,roughness:1,flatShading:true}));
+ rock.position.set(x,height/2-.15,z);rock.castShadow=true;rock.receiveShadow=true;scene.add(rock);
+ // pale summit rock/snow patches, shaped as separate 3D caps
+ if(height>27){
+  const capH=height*.23,capR=radius*.34;
+  const cap=new THREE.Mesh(new THREE.ConeGeometry(capR,capH,sides,1),M(seed%2?0xe8e7ef:0xf6eaf0,1));
+  cap.position.set(x,height-capH*.42,z);cap.rotation.y=seed*.37;cap.castShadow=true;scene.add(cap);
+ }
+}
+const mountainPalette=[0x777f9e,0x8589a8,0x6f7897,0x9693ad,0x747f9b];
+let mountainSeed=1;
+// Back range beyond the far end of the boulevard
+for(let i=0;i<15;i++){
+ const x=-52+i*7.5,z=-105-(i%3)*5;
+ buildMountain(x,z,17+(i%4)*3,27+(i%5)*6,mountainSeed++,mountainPalette[i%mountainPalette.length]);
+}
+// Left and right ranges follow the full length of the city
+for(let i=0;i<17;i++){
+ const z=10-i*7.1;
+ buildMountain(-48-(i%3)*4,z,18+(i%4)*2,26+(i%6)*5,mountainSeed++,mountainPalette[(i+2)%mountainPalette.length]);
+ buildMountain(48+(i%3)*4,z,18+(i%4)*2,28+(i%5)*6,mountainSeed++,mountainPalette[(i+4)%mountainPalette.length]);
+}
+// Front range closes the far edge behind the player spawn, without blocking the city streets
+for(let i=0;i<13;i++){
+ const x=-46+i*7.7,z=36+(i%3)*4;
+ buildMountain(x,z,18+(i%3)*3,25+(i%5)*6,mountainSeed++,mountainPalette[(i+1)%mountainPalette.length]);
+}
 
 // entry arch
 for(let x of [-7,7]){let c=new THREE.Mesh(new THREE.CylinderGeometry(.35,.48,7,16),gold);c.position.set(x,3.5,-53);scene.add(c)}let arch=new THREE.Mesh(new THREE.TorusGeometry(7,.32,12,48,Math.PI),gold);arch.position.set(0,5,-53);scene.add(arch);
