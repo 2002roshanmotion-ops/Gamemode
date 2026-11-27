@@ -552,6 +552,27 @@ for(const side of [-1,1])for(let j=0;j<2;j++){
  hairStrand(pts,.03,mat);
 }
 addRose(playerRig,.3,2.27,.06,1.15,.4);
+// Extra web-native character detail pass (no external model/assets required).
+// Tailored corset piping and subtle fabric fold geometry.
+const corsetPipe=M(0xffb7df,.34,.22),foldMat=M(0xffa3ce,.42,.16);
+for(let side of [-1,1]){
+ const pipePts=[];for(let k=0;k<=12;k++){const t=k/12;pipePts.push(new THREE.Vector3(side*(.12+.045*t),1.12+t*.43,.19+.035*Math.sin(t*Math.PI)));}
+ const pipe=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pipePts),24,.009,6,false),goldTrim);playerRig.add(pipe);
+ // Decorative shoulder seam arc
+ const arc=[];for(let k=0;k<=12;k++){const a=Math.PI*k/12;arc.push(new THREE.Vector3(side*(.24+.07*Math.sin(a)),1.51+.07*Math.cos(a),.03+.13*Math.sin(a)));}
+ playerRig.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(arc),24,.008,6,false),corsetPipe));
+}
+// Fine fabric folds on skirt, following its flared silhouette.
+for(let n=0;n<16;n++){
+ const a=n/16*Math.PI*2,pts=[];
+ for(let k=0;k<=12;k++){const t=k/12,rad=.2+.29*t+.018*Math.cos(a*12)*t;
+  pts.push(new THREE.Vector3(Math.sin(a)*rad,.99-.43*t+.012*Math.sin(a*8+.3)*t,Math.cos(a)*rad));}
+ const fold=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),20,.0045,5,false),n%4===0?goldTrim:foldMat);playerRig.add(fold);
+}
+// Layered underskirt rim for depth and a soft ruffled edge.
+const underPts=[];for(let s=0;s<=96;s++){const a=s/96*Math.PI*2,r=.505+.024*Math.cos(a*16)+.016*Math.sin(a*8+.6);underPts.push(new THREE.Vector3(Math.sin(a)*r,.535+.018*Math.sin(a*8+.6),Math.cos(a)*r));}
+const underRim=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(underPts),96,.018,6,false),lightpink);playerRig.add(underRim);
+// More defined knuckles, fingertips and small nails on the existing hands.
 const limbs=[];
 for(let side of [-1,1]){
  const legPivot=new THREE.Group();legPivot.position.set(side*.16,.72,0);playerRig.add(legPivot);
