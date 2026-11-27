@@ -122,12 +122,12 @@ function makeShopShell(cx,cy,cz,w,h,d,wallColor){
   const wx=cx+side*3.55,wy=cy-.65;
   block(2.75,1.55,.16,wall,wx,cy+h/2-.78,front+.015);
   block(2.75,1.15,.16,wall,wx,cy-h/2+.58,front+.015);
-  block(.82,5.2,.16,wall,wx-side*1.8,wy,front+.015);
+  block(.78,5.2,.16,wall,wx-side*1.95,wy,front+.015);block(.78,5.2,.16,wall,wx+side*1.8,wy,front+.015);
   const pane=new THREE.Mesh(new THREE.BoxGeometry(2.65,5.0,.045),glassPanel);pane.position.set(wx,wy,front+.105);scene.add(pane);
   block(.07,5.05,.11,gold,wx-1.35,wy,front+.14);block(.07,5.05,.11,gold,wx+1.35,wy,front+.14);
  }
  // Interior floor, trim, and a ceiling/roof slab; shop remains open through its doorway.
- block(w-.45,.16,d-.45,floor,cx,.02,cz);
+ block(w-.45,.12,d-.45,floor,cx,.06,cz);makeStaticCollider(cx,.08,cz,w-.45,.16,d-.45);
  block(w+.3,.38,d+.3,roof,cx,cy+h/2+.19,cz);
  // Gold framing at the entrance.
  for(const x of [cx-1.62,cx+1.62])block(.13,h-.25,.3,gold,x,cy,front+.04);
@@ -147,7 +147,7 @@ function makeShopInterior(cx,cz,w,d,floorColor){
 }
 function makeShopForecourt(cx,frontZ,w,d){
  const tile=M(0xf3c3df,.55),edge=M(0xd9a34e,.3,.5);
- block(w,.12,d,tile,cx,.02,frontZ+d/2);
+ block(w,.12,d,tile,cx,.02,frontZ+d/2);makeStaticCollider(cx,.02,frontZ+d/2,w,.12,d);
  // Neat gold edge strips along the sides and far edge, no raised curb.
  block(.12,.05,d,edge,cx-w/2,.105,frontZ+d/2);block(.12,.05,d,edge,cx+w/2,.105,frontZ+d/2);block(w,.05,.12,edge,cx,.105,frontZ+d);
  for(let k=1;k<4;k++)block(.025,.015,d-.25,M(0xffeaf5,.7),cx-w/2+k*w/4,.09,frontZ+d/2);
