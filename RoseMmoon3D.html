@@ -98,12 +98,7 @@ if(CANNON){
 }
 const gold=M(0xd9a34e,.3,.65),glass=new THREE.MeshStandardMaterial({color:0xffd9ee,roughness:.18,transparent:true,opacity:.58}),pave=M(0xeac0d9),pink=M(0xf2a8ce);
 block(92,.3,112,pave,0,-.2,-29);
-block(21,.12,108,M(0xf5e4ee),0,.015,-29);
-// Broad, restrained stone inlays replace the distracting tiny checkerboard tiles.
-const pavingA=M(0xf0d9e7,.88),pavingB=M(0xf5e7ef,.9),pavingGold=M(0xd8b16f,.55,.25);
-for(let z=-77;z<20;z+=12){
- block(19,.018,5.8,z%24===0?pavingA:pavingB,0,.085,z+5.8);
-}
+// Remove the pale carpet slab and decorative pavement tiles; leave the pink ground and walkways.
 
 // Decorative background props removed.
 // main RoseMmoon Fashion boutique
