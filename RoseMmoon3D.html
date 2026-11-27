@@ -571,7 +571,7 @@ for(let n=0;n<16;n++){
 }
 // Layered underskirt rim for depth and a soft ruffled edge.
 const underPts=[];for(let s=0;s<=96;s++){const a=s/96*Math.PI*2,r=.505+.024*Math.cos(a*16)+.016*Math.sin(a*8+.6);underPts.push(new THREE.Vector3(Math.sin(a)*r,.535+.018*Math.sin(a*8+.6),Math.cos(a)*r));}
-const underRim=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(underPts),96,.018,6,false),lightpink);playerRig.add(underRim);
+const underRim=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(underPts),96,.018,6,false),M(0xffb8d8,.42,.18));playerRig.add(underRim);
 // More defined knuckles, fingertips and small nails on the existing hands.
 const limbs=[];
 for(let side of [-1,1]){
