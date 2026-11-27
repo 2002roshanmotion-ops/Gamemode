@@ -29,7 +29,17 @@ setTimeout(()=>{if(!window.__roseCityReady)window.__roseLoadError('The 3D world 
 })();
 </script>
 <script type="module">
-import * as THREE from 'three';
+let THREE;
+try{
+ THREE=await import('https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js');
+}catch(primaryError){
+ try{
+  THREE=await import('https://unpkg.com/three@0.161.0/build/three.module.js');
+ }catch(fallbackError){
+  window.__roseLoadError('The 3D engine could not load from either source. Check your internet connection or content blocker, then reload.');
+  throw fallbackError;
+ }
+}
 const $=id=>document.getElementById(id),scene=new THREE.Scene();scene.background=new THREE.Color(0xf3c6e1);scene.fog=new THREE.Fog(0xf3c6e1,40,120);
 
 // 360-degree illustrated city skyline panorama behind the playable district
