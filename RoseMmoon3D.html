@@ -91,11 +91,11 @@ if(CANNON){
  physicsMaterials.ground=new CANNON.Material('city-ground');
  physicsMaterials.player=new CANNON.Material('player');
  physicsWorld.addContactMaterial(new CANNON.ContactMaterial(physicsMaterials.player,physicsMaterials.ground,{friction:.015,restitution:0}));
- makeStaticCollider(0,-.2,-27,44,.4,54);
+ makeStaticCollider(0,-.2,-30,64,.4,70);
  // No perimeter walls: the city can be entered from any direction.
 }
 const gold=M(0xd9a34e,.3,.65),glass=new THREE.MeshStandardMaterial({color:0xffd9ee,roughness:.18,transparent:true,opacity:.58}),pave=M(0xd987b2),pink=M(0xf2a8ce);
-block(100,.3,100,pave,0,-.2,-27);
+block(130,.3,130,pave,0,-.2,-30);
 // Remove the pale carpet slab and decorative pavement tiles; leave the pink ground and walkways.
 
 // Decorative background props removed.
@@ -142,12 +142,12 @@ function signText(title,subtitle,x,y,z,w,h){const canvas=document.createElement(
 // Removed fountain, garden trees, planters and garden props.
 // Expanded luxury shopping district: detailed streets, lighting and architecture
 const sidewalkMat=M(0xd98bb8),roadMat=M(0x8f8291,.92),roadLine=M(0xfff5fa,.8),windowGlow=new THREE.MeshStandardMaterial({color:0xffe4f2,emissive:0xff9bcf,emissiveIntensity:.22,roughness:.25});
-block(5,.12,40,roadMat,0,.02,-27);
-block(2.4,.16,40,sidewalkMat,-3.7,.1,-27);block(2.4,.16,40,sidewalkMat,3.7,.1,-27);
+block(5,.12,54,roadMat,0,.02,-30);
+block(2.4,.16,54,sidewalkMat,-3.7,.1,-30);block(2.4,.16,54,sidewalkMat,3.7,.1,-30);
 // Keep a single straight central boulevard; remove both cross streets and their sidewalks.
 // Road markings removed for a clean, uninterrupted road surface.
 function streetLamp(x,z){let pole=new THREE.Mesh(new THREE.CylinderGeometry(.07,.11,4.7,10),gold);pole.position.set(x,2.35,z);scene.add(pole);let side=x<0?1:-1;block(.9,.09,.12,gold,x+side*.35,4.55,z);let shade=new THREE.Mesh(new THREE.SphereGeometry(.3,14,10),M(0xffe6ad,.25,.1));shade.scale.set(1,.55,1);shade.position.set(x+side*.75,4.42,z);scene.add(shade);let light=new THREE.PointLight(0xffd6ec,1.5,8);light.position.copy(shade.position);scene.add(light)}
-for(let z=-42;z<0;z+=18){streetLamp(-4.9,z);streetLamp(4.9,z)}
+for(let z=-54;z<0;z+=18){streetLamp(-4.9,z);streetLamp(4.9,z)}
 function detailedBuilding(x,z,w,h,d,color,style=0){
  const wall=M(color,.62),trim=M(style%2?0xe3b66d:0xffe1ef,.32,.35);
  block(w,h,d,wall,x,h/2,z);makeStaticCollider(x,h/2,z,w,h,d);block(w+.35,.28,d+.35,trim,x,h+.14,z);block(w+.5,.24,d+.45,trim,x,.12,z);
@@ -228,7 +228,7 @@ let limbs=[];for(let side of [-1,1]){
  for(let f=0;f<4;f++){let finger=new THREE.Mesh(new THREE.CapsuleGeometry(.012,.045,3,6),skin);finger.position.set((f-1.5)*.025,-.735,.025);finger.rotation.z=(f-1.5)*-.12;armPivot.add(finger)}
  limbs.push({legPivot,armPivot,side})
 }scene.add(g);return {g,body,limbs,faceEyes,blinkState:{nextBlink:performance.now()+Math.random()*2500,blinkStart:0},phase:Math.random()*Math.PI*2,originX:x,originZ:z,direction:Math.random()<.5?-1:1,speed:.28+Math.random()*.12,range:5}}
-let women=[];for(let i=0;i<2;i++)women.push(npc(i%2===0?-3.7:3.7,-17));
+let women=[];for(let i=0;i<4;i++)women.push(npc(i%2===0?-3.7:3.7,-15-Math.floor(i/2)*18));
 // Main character 3D stand-in for the first playable build
 const player=new THREE.Group();scene.add(player);const playerRig=new THREE.Group();player.add(playerRig);const skin=M(0xffd0bd),hair=M(0x422236),outfit=M(0xe92389),boots=M(0x99145e,.3,.2),iris=M(0x8b3f75,.22,.05);
 function part(geo,ma,x,y,z,sx=1,sy=1,sz=1){let o=new THREE.Mesh(geo,ma);o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;playerRig.add(o);return o}
@@ -375,7 +375,7 @@ if(physicsWorld&&playerBody){
  player.position.set(playerBody.position.x,Math.max(0,playerBody.position.y-.85),playerBody.position.z);
  if(playerBody.position.y<=.87&&playerBody.velocity.y<0)playerBody.velocity.y=0;
 }else{
- if(moving){let sp=input.run?8.5:5;player.position.x=THREE.MathUtils.clamp(player.position.x+moveX*sp*dt,-42,42);player.position.z=THREE.MathUtils.clamp(player.position.z+moveZ*sp*dt,-76,12)}
+ if(moving){let sp=input.run?8.5:5;player.position.x=THREE.MathUtils.clamp(player.position.x+moveX*sp*dt,-62,62);player.position.z=THREE.MathUtils.clamp(player.position.z+moveZ*sp*dt,-95,35)}
  if(jumpVelocity!==0||player.position.y>0){jumpVelocity-=18*dt;player.position.y=Math.max(0,player.position.y+jumpVelocity*dt);if(player.position.y===0)jumpVelocity=0}
 }
 limbs.forEach(l=>{let swing=moving?Math.sin(gait)*(input.run?1.12:.95)*l.side:Math.sin(now*.0015)*.018*l.side;l.legPivot.rotation.x=swing;l.armPivot.rotation.x=moving?-swing*.95:Math.sin(now*.0015)*.012*l.side});playerRig.position.y=0;playerRig.rotation.z=moving?THREE.MathUtils.clamp(-x*.055,-.07,.07):0;let orbitRadius=cameraDistance,camTarget=new THREE.Vector3(player.position.x+Math.sin(cameraYaw)*Math.cos(cameraPitch)*orbitRadius,player.position.y+1.3+Math.sin(cameraPitch)*orbitRadius,player.position.z+Math.cos(cameraYaw)*Math.cos(cameraPitch)*orbitRadius);const followSmooth=1-Math.exp(-12*dt);camera.position.lerp(camTarget,followSmooth);camera.lookAt(player.position.x,player.position.y+1.3,player.position.z);// Decorative scenery animation removed.
