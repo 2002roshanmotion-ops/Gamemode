@@ -12,7 +12,7 @@ window.__roseLoadError=message=>{const label=document.getElementById('loadingSta
 window.addEventListener('error',e=>{if(!window.__roseCityReady)window.__roseLoadError(e.message||'A script or graphics component failed.');});
 window.addEventListener('unhandledrejection',e=>{if(!window.__roseCityReady)window.__roseLoadError(e.reason&&e.reason.message||String(e.reason)||'A module failed.');});
 function roseStartMessage(message){const p=document.querySelector('#welcome .panel p');if(p)p.textContent=message}function roseTryStart(){if(typeof window.__roseCityStart==='function'){window.__roseCityStart();return}roseStartMessage('The 3D city is still preparing. Please wait until loading finishes.')}document.addEventListener('click',e=>{if(e.target&&e.target.closest&&e.target.closest('#start')){e.preventDefault();roseTryStart()}},true);document.addEventListener('keydown',e=>{if((e.key==='Enter'||e.key===' ')&&e.target&&e.target.id==='start'){e.preventDefault();roseTryStart()}},true);
-setTimeout(()=>{if(!window.__roseCityReady)window.__roseLoadError('The 3D world is taking too long. Check your connection, then reload.');},30000);
+setTimeout(()=>{if(!window.__roseCityReady)window.__roseLoadError('The 3D world is taking too long. Check your connection, then reload.');},18000);
 </script>
 <div id="welcome"><div class="panel"><h2>RoseMmoon City</h2><p>Welcome to your pink luxury shopping district. Explore the boulevard and find the RoseMmoon Fashion boutique.</p><button class="btn" id="start">ENTER CITY</button><p class="muted">Use the touch pad to walk. Tap RUN to move faster.</p></div></div>
 <div id="shop"><div class="panel"><h2 id="shopTitle">RoseMmoon</h2><p id="shopTag">Choose your destination</p><p id="shopDescription">Visit one of the two RoseMmoon stores.</p><button class="btn" id="visit">OPEN WEBSITE</button><p><button class="btn" id="back" style="background:#96718a;box-shadow:0 5px #705268">BACK TO CITY</button></p></div></div>
@@ -34,7 +34,7 @@ const $=id=>document.getElementById(id),scene=new THREE.Scene();scene.background
 
 // 360-degree illustrated city skyline panorama behind the playable district
 function makeCityPanorama(){
- const canvas=document.createElement('canvas');canvas.width=4096;canvas.height=1024;
+ const canvas=document.createElement('canvas');canvas.width=2048;canvas.height=512;
  const c=canvas.getContext('2d'),W=canvas.width,H=canvas.height;
  const sky=c.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#8db8df');sky.addColorStop(.38,'#c7c8e8');sky.addColorStop(.68,'#f5c9df');sky.addColorStop(1,'#f7d8e5');c.fillStyle=sky;c.fillRect(0,0,W,H);
  // Keep the skyline clear; the surrounding mountains are real 3D terrain meshes in the world.
@@ -57,7 +57,7 @@ function makeCityPanorama(){
  shell.position.y=30;scene.add(shell);shell.renderOrder=-10;
 }
 
-const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,220);const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio,1.1));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=false;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;document.body.insertBefore(renderer.domElement,$('hud'));renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();window.__roseLoadError('The 3D graphics connection was interrupted. Reload the city to recover.');$('loading').style.display='grid';},{passive:false});renderer.domElement.addEventListener('webglcontextrestored',()=>{if(window.__roseCityReady){window.__roseLoadProgress(100,'Graphics restored. Reloading the city is recommended.');$('loadRetry').style.display='inline-block';$('loading').style.display='grid';}});if(window.__roseLoadProgress)window.__roseLoadProgress(12,'Loading the 3D graphics engine…');
+const camera=new THREE.PerspectiveCamera(55,innerWidth/innerHeight,.1,220);const renderer=new THREE.WebGLRenderer({antialias:false,powerPreference:'low-power',precision:'mediump'});renderer.setPixelRatio(Math.min(devicePixelRatio,.85));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=false;renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;document.body.insertBefore(renderer.domElement,$('hud'));renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();window.__roseLoadError('The 3D graphics connection was interrupted. Reload the city to recover.');$('loading').style.display='grid';},{passive:false});renderer.domElement.addEventListener('webglcontextrestored',()=>{if(window.__roseCityReady){window.__roseLoadProgress(100,'Graphics restored. Reloading the city is recommended.');$('loadRetry').style.display='inline-block';$('loading').style.display='grid';}});if(window.__roseLoadProgress)window.__roseLoadProgress(12,'Loading the 3D graphics engine…');
 scene.add(new THREE.HemisphereLight(0xffe9f5,0x8b6b8b,2));const sun=new THREE.DirectionalLight(0xffefd9,2.5);sun.position.set(-15,28,15);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);scene.add(sun);
 const M=(c,r=.7,m=0)=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m});
 makeCityPanorama();if(window.__roseLoadProgress)window.__roseLoadProgress(22,'Creating the RoseMmoon skyline…');
@@ -111,14 +111,14 @@ function detailedBuilding(x,z,w,h,d,color,style=0){
 const districtColors=[0xe6a9c9,0xd5b8e8,0xf1c3d8,0xc9c5eb,0xe8c0ad,0xbfcfe5];
 for(let i=0;i<6;i++){let side=i%2===0?-1:1,row=Math.floor(i/2),x=side*23.5,z=-9-row*23;detailedBuilding(x,z,8+row%2,8+row*1.3,8,districtColors[i],i)}
 for(let i=0;i<4;i++){let side=i%2===0?-1:1,x=side*31,z=-18-Math.floor(i/2)*34;detailedBuilding(x,z,7,13,7,districtColors[(i+2)%districtColors.length],i+1)}
-function flowerBed(x,z){block(3.5,.45,1.5,M(0xf8dce9),x,.24,z);for(let i=0;i<13;i++){let fx=x+(Math.random()-.5)*3,fz=z+(Math.random()-.5)*1.1;let stem=new THREE.Mesh(new THREE.CylinderGeometry(.025,.035,.42,6),M(0x5a9b70));stem.position.set(fx,.65,fz);scene.add(stem);ball(.13,M([0xf28cbd,0xffd5e8,0xe9b4e9][i%3]),fx,.9,fz,.9,1.1,.9)}}
+function flowerBed(x,z){block(3.5,.45,1.5,M(0xf8dce9),x,.24,z);for(let i=0;i<9;i++){let fx=x+(Math.random()-.5)*3,fz=z+(Math.random()-.5)*1.1;let stem=new THREE.Mesh(new THREE.CylinderGeometry(.025,.035,.42,6),M(0x5a9b70));stem.position.set(fx,.65,fz);scene.add(stem);ball(.13,M([0xf28cbd,0xffd5e8,0xe9b4e9][i%3]),fx,.9,fz,.9,1.1,.9)}}
 for(let z=-64;z<8;z+=16){flowerBed(-8.3,z);flowerBed(8.3,z+7)}
 for(let i=0;i<9;i++){let x=-42+i*10,z=-91-(i%3)*5,h=14+(i%4)*5,w=6+(i%3)*2;detailedBuilding(x,z,w,h,7,districtColors[i%districtColors.length],i)}
 const clouds=[];for(let i=0;i<7;i++){let cloud=new THREE.Group();for(let j=0;j<4;j++){let puff=new THREE.Mesh(new THREE.SphereGeometry(1.8+j%2*.35,12,10),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.46,depthWrite:false}));puff.position.set(j*1.7,Math.sin(j)*.35,0);cloud.add(puff)}cloud.position.set(-38+i*13,27+(i%3)*2,-52-(i%2)*24);scene.add(cloud);clouds.push(cloud)}
 
 // Real 3D mountain terrain surrounding the outer edge of the city
 function buildMountain(x,z,radius,height,seed,shade){
- const sides=7+(seed%3),geo=new THREE.ConeGeometry(radius,height,sides,5);
+ const sides=6+(seed%2),geo=new THREE.ConeGeometry(radius,height,sides,3);
  const pos=geo.attributes.position;
  for(let i=0;i<pos.count;i++){
   const y=pos.getY(i),xx=pos.getX(i),zz=pos.getZ(i);
@@ -139,12 +139,12 @@ function buildMountain(x,z,radius,height,seed,shade){
 const mountainPalette=[0x777f9e,0x8589a8,0x6f7897,0x9693ad,0x747f9b];
 let mountainSeed=1;
 // Back range beyond the far end of the boulevard
-for(let i=0;i<15;i++){
+for(let i=0;i<11;i++){
  const x=-52+i*7.5,z=-105-(i%3)*5;
  buildMountain(x,z,17+(i%4)*3,27+(i%5)*6,mountainSeed++,mountainPalette[i%mountainPalette.length]);
 }
 // Left and right ranges follow the full length of the city
-for(let i=0;i<17;i++){
+for(let i=0;i<13;i++){
  const z=10-i*7.1;
  buildMountain(-48-(i%3)*4,z,18+(i%4)*2,26+(i%6)*5,mountainSeed++,mountainPalette[(i+2)%mountainPalette.length]);
  buildMountain(48+(i%3)*4,z,18+(i%4)*2,28+(i%5)*6,mountainSeed++,mountainPalette[(i+4)%mountainPalette.length]);
@@ -165,12 +165,12 @@ function forestTree(x,z,scale=1){
  scene.add(g);natureTrees.push(g);return g;
 }
 // Dense but spaced forest belts just inside the mountain perimeter
-for(let i=0;i<36;i++){
- const z=-78+(i%18)*5.1,side=i<18?-1:1,x=side*(32+(i%3)*2.2);
+for(let i=0;i<24;i++){
+ const z=-78+(i%12)*7.7,side=i<12?-1:1,x=side*(32+(i%3)*2.2);
  forestTree(x,z,.8+(i%4)*.12);
 }
-for(let i=0;i<22;i++){
- const x=-38+(i%11)*7.4,z=i<11?-83:20;
+for(let i=0;i<14;i++){
+ const x=-38+(i%7)*12.3,z=i<7?-83:20;
  forestTree(x,z,.85+(i%3)*.15);
 }
 // A winding blue river along the eastern edge, with a small reflective lake
