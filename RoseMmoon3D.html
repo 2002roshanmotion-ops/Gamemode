@@ -417,6 +417,11 @@ function addAnimeFace(parent,{x=0,y=0,z=0,scale=1,skinMat,hairMat,irisMat}={}){
   scl(new THREE.SphereGeometry(.028,14,10),ink,side*.006,-.012,.03,.9,1.1,.4);
   scl(new THREE.SphereGeometry(.014,10,8),shine,-.012,.018,.04,.8,1,.4);
   scl(new THREE.SphereGeometry(.007,8,8),shine,.018,-.02,.041,.8,1,.4);
+  // Curved upper/lower eyelids, extra lashes and a visible anime eye crease.
+  const upperPts=[new THREE.Vector3(-.073*scale,.012*scale,.016*scale),new THREE.Vector3(-.035*scale,.055*scale,.02*scale),new THREE.Vector3(0,.072*scale,.022*scale),new THREE.Vector3(.035*scale,.055*scale,.02*scale),new THREE.Vector3(.073*scale,.012*scale,.016*scale)];
+  eye.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(upperPts),14,.009*scale,5,false),ink));
+  const lowerPts=[new THREE.Vector3(-.055*scale,-.035*scale,.014*scale),new THREE.Vector3(0,-.052*scale,.018*scale),new THREE.Vector3(.055*scale,-.035*scale,.014*scale)];
+  eye.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(lowerPts),8,.0045*scale,5,false),ink));
   const lashPts=[new THREE.Vector3(-.07*scale,.018*scale,.012*scale),new THREE.Vector3(0,.071*scale,.018*scale),new THREE.Vector3(.07*scale,.02*scale,.012*scale)];
   eye.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(lashPts),10,.007*scale,5,false),ink));
   const browPts=[new THREE.Vector3(-.05*scale,.105*scale,0),new THREE.Vector3(0,.12*scale,.006*scale),new THREE.Vector3(.05*scale,.105*scale,0)];
@@ -521,6 +526,10 @@ part(new THREE.SphereGeometry(.13,18,12),hair,.045,2.25,.11,1.1,.55,.8);
 part(new THREE.SphereGeometry(.095,16,12),hair,.16,2.205,.105,1,.7,.75);
 // Long wavy brown hair past the shoulders, lighter highlight strands and front locks, and a pink rose hair flower.
 const hairHi=M(0xa45d34,.38,.08);
+// Additional sculpted front fringe locks and curled side strands, giving the hair a layered silhouette.
+for(let side of [-1,1]){for(let n=0;n<2;n++){const lock=new THREE.Mesh(new THREE.CapsuleGeometry(.055-n*.012,.24+n*.04,6,12),n?hairHi:hair);lock.position.set(side*(.13+n*.09),2.11-n*.035,.13-n*.015);lock.rotation.z=side*(.28+n*.22);playerRig.add(lock)}
+ const curlPts=[];for(let k=0;k<=12;k++){const t=k/12;curlPts.push(new THREE.Vector3(side*(.28+.1*Math.sin(t*5)),1.96-t*.85,-.02-t*.22))}hairStrand(curlPts,.045,side===1?hairHi:hair);}
+const hairBow=part(new THREE.SphereGeometry(.09,14,10),M(0xff77b7,.32),-.28,2.24,.06,1,.7,.65);hairBow.rotation.z=.2;addRose(playerRig,-.3,2.25,.1,.8,.3);
 for(let i=0;i<9;i++){
  const u=i/8-.5,mat=i%3===0?hairHi:hair,pts=[];
  for(let k=0;k<=6;k++){const t=k/6;pts.push(new THREE.Vector3(u*.5*(1+t*.9)+Math.sin(t*8+i*1.3)*.05*(.3+t),2.2-t*1.28,-.36-t*.1))}
@@ -541,6 +550,7 @@ for(let side of [-1,1]){
  const boot=new THREE.Mesh(new THREE.CapsuleGeometry(.085,.12,5,12),boots);boot.position.set(0,-.72,.015);boot.castShadow=true;legPivot.add(boot);
 const ankleCuff=new THREE.Mesh(new THREE.TorusGeometry(.083,.012,6,16),goldTrim);ankleCuff.position.set(0,-.62,.015);legPivot.add(ankleCuff);
  const sole=new THREE.Mesh(new THREE.CylinderGeometry(.12,.145,.055,14),darkPink);sole.position.set(0,-.925,.02);legPivot.add(sole);
+ const bootStrap=new THREE.Mesh(new THREE.TorusGeometry(.105,.012,6,18),goldTrim);bootStrap.position.set(0,-.63,.015);legPivot.add(bootStrap);
  const heel=new THREE.Mesh(new THREE.CylinderGeometry(.022,.03,.16,8),darkPink);heel.position.set(0,-.875,-.075);legPivot.add(heel);
  addRose(legPivot,0,-.5,.14,.6);
  const toe=new THREE.Mesh(new THREE.SphereGeometry(.105,18,12),boots);toe.position.set(0,-.83,.095);toe.scale.set(1,.55,1.35);legPivot.add(toe);
@@ -553,6 +563,7 @@ const shoeRose=addRose(legPivot,0,-.77,.16,.35);shoeRose.scale.set(.55,.55,.55);
  const elbow=new THREE.Mesh(new THREE.SphereGeometry(.065,12,10),skin);elbow.position.y=-.47;armPivot.add(elbow);
  const forearm=new THREE.Mesh(new THREE.CapsuleGeometry(.052,.19,5,10),skin);forearm.position.y=-.59;armPivot.add(forearm);
  const cuff=new THREE.Mesh(new THREE.TorusGeometry(.055,.012,6,16),M(0xff9fd0,.25,.35));cuff.position.y=-.68;armPivot.add(cuff);
+ const wristBand=new THREE.Mesh(new THREE.TorusGeometry(.05,.009,6,16),goldTrim);wristBand.position.y=-.7;armPivot.add(wristBand);
  const palm=new THREE.Mesh(new THREE.SphereGeometry(.075,14,12),skin);palm.position.set(0,-.75,.015);palm.scale.set(.82,1,.58);armPivot.add(palm);
  for(let f=0;f<4;f++){const finger=new THREE.Mesh(new THREE.CapsuleGeometry(.014,.065,4,7),skin);finger.position.set((f-1.5)*.033,-.82,.035);finger.rotation.z=(f-1.5)*-.1;armPivot.add(finger);const nail=new THREE.Mesh(new THREE.SphereGeometry(.009,8,6),M(0xffd2e5,.25));nail.position.set((f-1.5)*.033,-.79,.047);nail.scale.set(.7,.8,.45);armPivot.add(nail)}
  const thumb=new THREE.Mesh(new THREE.CapsuleGeometry(.016,.055,4,7),skin);thumb.position.set(side*.075,-.77,.045);thumb.rotation.z=side*-.65;armPivot.add(thumb);
