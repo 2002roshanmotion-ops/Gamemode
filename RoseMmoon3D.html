@@ -304,6 +304,9 @@ const overskirt=part(new THREE.ConeGeometry(.485,.48,20),M(0xff79b9),0,.84,.018,
 for(let i=0;i<12;i++){let a=i*Math.PI*2/12;let pleat=part(new THREE.BoxGeometry(.018,.36,.018),seamMat,Math.sin(a)*.31,.78,Math.cos(a)*.31);pleat.rotation.y=a}
 part(new THREE.TorusGeometry(.34,.025,8,28),goldTrim,0,1.08,0,1,.55,1);
 part(new THREE.SphereGeometry(.09,16,12),M(0xffd5e8),0,1.55,.16,1.3,.65,.65);
+// Visible front-facing anime face base; unlit skin keeps the face from turning black in mobile lighting.
+const faceBase=new THREE.Mesh(new THREE.SphereGeometry(.255,24,20),new THREE.MeshBasicMaterial({color:0xffd0bd}));
+faceBase.position.set(0,2.075,.105);faceBase.scale.set(.78,1.02,.58);playerRig.add(faceBase);
 const playerFaceEyes=addAnimeFace(playerRig,{y:2.08,z:.205,scale:1,skinMat:skin,hairMat:hair,irisMat:iris});
 const playerBlinkState={nextBlink:performance.now()+1800+Math.random()*1800,blinkStart:0};
 // Long glossy hair silhouette, side locks and shaped fringe
