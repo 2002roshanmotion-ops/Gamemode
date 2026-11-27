@@ -32,6 +32,28 @@ function makeCityPanorama(){
  const sky=c.createLinearGradient(0,0,0,H);sky.addColorStop(0,'#8db8df');sky.addColorStop(.38,'#c7c8e8');sky.addColorStop(.68,'#f5c9df');sky.addColorStop(1,'#f7d8e5');c.fillStyle=sky;c.fillRect(0,0,W,H);
  // soft distant hills behind the skyline
  for(let layer=0;layer<3;layer++){c.beginPath();let base=H*(.73+layer*.045);c.moveTo(0,H);c.lineTo(0,base);for(let x=0;x<=W;x+=24)c.lineTo(x,base-Math.sin(x*.003+layer*2)*24-Math.sin(x*.011+layer)*11);c.lineTo(W,H);c.closePath();c.fillStyle=['#a5a9c9','#8e91b4','#777c9f'][layer];c.fill()}
+ // Full 360 mountain ranges: layered peaks rise behind the whole city to close empty horizon gaps
+ for(let layer=0;layer<3;layer++){
+  const base=H*(.79+layer*.035),step=layer===0?150:layer===1?190:230,offset=layer*71;
+  c.beginPath();c.moveTo(0,H);c.lineTo(0,base);
+  for(let px=0;px<=W+step;px+=step){
+   const center=px+offset,peak=H*(.22+layer*.105)+((Math.sin(px*.017+layer*2)+1)*.045*H);
+   const half=step*(.42+(Math.sin(px*.031+layer)*.08));
+   c.lineTo(center-half,base-18);c.lineTo(center,peak);c.lineTo(center+half,base-12);
+  }
+  c.lineTo(W,H);c.closePath();
+  const mountainShade=c.createLinearGradient(0,H*.2,0,H);
+  mountainShade.addColorStop(0,['#8196bb','#8994b5','#8589aa'][layer]);
+  mountainShade.addColorStop(1,['#9ba5c5','#a5a2bd','#aaa0b7'][layer]);
+  c.fillStyle=mountainShade;c.fill();
+  // pale pink snow caps catch the sunset light on the tallest ridges
+  for(let px=0;px<=W+step;px+=step){
+   const center=px+offset,peak=H*(.22+layer*.105)+((Math.sin(px*.017+layer*2)+1)*.045*H);
+   const half=step*(.42+(Math.sin(px*.031+layer)*.08));
+   c.beginPath();c.moveTo(center-half*.23,peak+(base-peak)*.28);c.lineTo(center,peak);c.lineTo(center+half*.24,peak+(base-peak)*.3);c.lineTo(center+half*.08,peak+(base-peak)*.25);c.lineTo(center,peak+(base-peak)*.36);c.lineTo(center-half*.08,peak+(base-peak)*.25);c.closePath();
+   c.fillStyle=['rgba(255,246,250,.92)','rgba(244,228,245,.72)','rgba(238,218,239,.55)'][layer];c.fill();
+  }
+ }
  // continuous 360 city: varied towers, apartment blocks and landmark roofs
  let x=0,seed=41;const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280};
  while(x<W){let bw=35+rnd()*105,bh=110+rnd()*260,base=H*.82,top=base-bh;
