@@ -107,20 +107,20 @@ for(let z=-77;z<20;z+=12){
 }
 for(let x of [-8.8,8.8])block(.12,.035,104,pavingGold,x,.105,-29);
 
-for(let i=0;i<8;i++){let m=new THREE.Mesh(new THREE.ConeGeometry(9,20,5),M(i%2?0xaab5df:0x9caad6));m.position.set(-43+i*12,8,-85);scene.add(m)}
+// Decorative background props removed.
 // main RoseMmoon Fashion boutique
-block(13,9,7,M(0xf0a9cc),8,4.5,-27);makeStaticCollider(8,4.5,-30.25,13,9,.5);makeStaticCollider(1.75,4.5,-27,.5,9,6.5);makeStaticCollider(14.25,4.5,-27,.5,9,6.5);block(13.5,.4,7.5,gold,8,9,-27);block(6.3,1.7,.25,M(0x96346e),8,7.3,-23.2);
-for(let x of [3.2,12.8])block(.4,8.6,.35,gold,x,4.4,-23.2);
-for(let x of [5.3,8,10.7]){block(2.15,4.5,.2,glass,x,3,-23.2);block(.1,4.5,.25,gold,x-1.1,3,-23.1);block(.1,4.5,.25,gold,x+1.1,3,-23.1)}
-let pendingLogoAssets=2;let cityFinishQueued=false;function logoAssetFinished(){pendingLogoAssets=Math.max(0,pendingLogoAssets-1);if(window.__roseLoadProgress)window.__roseLoadProgress(88,'Loading the two store logos…');if(window.__roseCityReady&&pendingLogoAssets===0)finishCityLoading()}const logoLoader=new THREE.TextureLoader();logoLoader.setCrossOrigin('anonymous');function imageLogo(path,maxW,maxH,x,y,z){logoLoader.load(path,texture=>{logoAssetFinished();texture.colorSpace=THREE.SRGBColorSpace;const aspect=texture.image.width/texture.image.height;const w=Math.min(maxW,maxH*aspect),h=w/aspect;const material=new THREE.MeshBasicMaterial({map:texture,color:0xffffff,transparent:true,side:THREE.DoubleSide,toneMapped:false});const logo=new THREE.Mesh(new THREE.PlaneGeometry(w,h),material);logo.position.set(x,y,z);scene.add(logo);},undefined,error=>{console.warn('Logo image could not load:',path,error);logoAssetFinished()});}imageLogo('https://d2ol7oe51mr4n9.cloudfront.net/user_3JYbYCHyy3naSeG6RhPtSZPxh49/e5ee25d3-5140-4aec-96d9-c570362e35c7.png',2.6,2.6,5.9,7.3,-23);signText('FASHION','LET YOUR BEAUTY SPEAK',9.55,7.3,-23.08,3.8,1.15);let lamp=new THREE.PointLight(0xffb4d9,12,20);lamp.position.set(8,4,-20);scene.add(lamp);
+block(10,9,7,M(0xf0a9cc),11,4.5,-27);makeStaticCollider(11,4.5,-30.25,10,9,.5);makeStaticCollider(6,4.5,-27,.5,9,6.5);makeStaticCollider(16,4.5,-27,.5,9,6.5);block(10.5,.4,7.5,gold,11,9,-27);block(5.8,1.7,.25,M(0x96346e),11,7.3,-23.2);
+for(let x of [6.2,15.8])block(.4,8.6,.35,gold,x,4.4,-23.2);
+for(let x of [8.3,11,13.7]){block(2.15,4.5,.2,glass,x,3,-23.2);block(.1,4.5,.25,gold,x-1.1,3,-23.1);block(.1,4.5,.25,gold,x+1.1,3,-23.1)}
+let pendingLogoAssets=2;let cityFinishQueued=false;function logoAssetFinished(){pendingLogoAssets=Math.max(0,pendingLogoAssets-1);if(window.__roseLoadProgress)window.__roseLoadProgress(88,'Loading the two store logos…');if(window.__roseCityReady&&pendingLogoAssets===0)finishCityLoading()}const logoLoader=new THREE.TextureLoader();logoLoader.setCrossOrigin('anonymous');function imageLogo(path,maxW,maxH,x,y,z){logoLoader.load(path,texture=>{logoAssetFinished();texture.colorSpace=THREE.SRGBColorSpace;const aspect=texture.image.width/texture.image.height;const w=Math.min(maxW,maxH*aspect),h=w/aspect;const material=new THREE.MeshBasicMaterial({map:texture,color:0xffffff,transparent:true,side:THREE.DoubleSide,toneMapped:false});const logo=new THREE.Mesh(new THREE.PlaneGeometry(w,h),material);logo.position.set(x,y,z);scene.add(logo);},undefined,error=>{console.warn('Logo image could not load:',path,error);logoAssetFinished()});}imageLogo('https://d2ol7oe51mr4n9.cloudfront.net/user_3JYbYCHyy3naSeG6RhPtSZPxh49/e5ee25d3-5140-4aec-96d9-c570362e35c7.png',2.6,2.6,8.9,7.3,-23);signText('FASHION','LET YOUR BEAUTY SPEAK',12.55,7.3,-23.08,3.8,1.15);let lamp=new THREE.PointLight(0xffb4d9,12,20);lamp.position.set(11,4,-20);scene.add(lamp);
 // neighboring pastel buildings
 for(let i=0;i<4;i++){let z=-12-i*17;if(i===1)continue;block(9,9,9,M([0xe3a6c8,0xd7b3e4,0xf0bfd8,0xc9b8e8][i]),-20,4.5,z);makeStaticCollider(-20,4.5,z,9,9,9);block(9.3,.35,9.3,gold,-20,9.1,z);for(let y=2;y<8;y+=2.5)for(let x=-22;x<=-18;x+=2)block(.9,1.4,.08,glass,x,y,z+4.55)}
 
 // Rosemoon Handmade boutique, across the boulevard from Fashion
-block(12,8,7,M(0xe9a6c9),-8,4,-27);makeStaticCollider(-8,4,-30.25,12,8,.5);makeStaticCollider(-14,4,-27,.5,8,6.5);makeStaticCollider(-2,4,-27,.5,8,6.5);block(12.5,.4,7.5,gold,-8,8.2,-27);
-for(let x of [-12.3,-3.7])block(.35,7.6,.35,gold,x,4,-23.2);
-for(let x of [-10,-8,-6]){block(1.6,4,.2,glass,x,2.8,-23.2);block(.09,4,.22,gold,x-.83,2.8,-23.1);block(.09,4,.22,gold,x+.83,2.8,-23.1)}
-imageLogo('https://d2ol7oe51mr4n9.cloudfront.net/user_3JYbYCHyy3naSeG6RhPtSZPxh49/398594e4-ceb9-452c-b321-e3b38383fed5.png',2.6,2.6,-10.25,6.8,-23.08);signText('HANDMADE','',-6.35,6.8,-23.08,4.2,1.15);
+block(10,8,7,M(0xe9a6c9),-11,4,-27);makeStaticCollider(-11,4,-30.25,10,8,.5);makeStaticCollider(-16,4,-27,.5,8,6.5);makeStaticCollider(-6,4,-27,.5,8,6.5);block(10.5,.4,7.5,gold,-11,8.2,-27);
+for(let x of [-15.3,-6.7])block(.35,7.6,.35,gold,x,4,-23.2);
+for(let x of [-13,-11,-9]){block(1.6,4,.2,glass,x,2.8,-23.2);block(.09,4,.22,gold,x-.83,2.8,-23.1);block(.09,4,.22,gold,x+.83,2.8,-23.1)}
+imageLogo('https://d2ol7oe51mr4n9.cloudfront.net/user_3JYbYCHyy3naSeG6RhPtSZPxh49/398594e4-ceb9-452c-b321-e3b38383fed5.png',2.6,2.6,-13.25,6.8,-23.08);signText('HANDMADE','',-9.35,6.8,-23.08,4.2,1.15);
 function signText(title,subtitle,x,y,z,w,h){const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=320;const ctx=canvas.getContext('2d');ctx.textAlign='center';ctx.shadowColor='rgba(117,22,69,.3)';ctx.shadowBlur=12;ctx.fillStyle='#a51f61';ctx.font='bold 132px Georgia';ctx.fillText(title,512,145);ctx.shadowBlur=0;ctx.fillStyle='#b98232';ctx.font='bold 48px Georgia';ctx.fillText(subtitle,512,235);const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;const material=new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide,toneMapped:false});const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,h),material);mesh.position.set(x,y,z);scene.add(mesh);}
  // Grand RoseMmoon City entrance gate — open central span keeps the boulevard clear.
  const gateGold=M(0xd9a34e,.28,.72),gatePink=M(0xe9a1c7,.48,.18),gateStone=M(0xf7e8f0,.72);
@@ -149,11 +149,7 @@ function signText(title,subtitle,x,y,z,w,h){const canvas=document.createElement(
  gateLogo.position.set(0,9.35,-77.12);scene.add(gateLogo);
  let hlamp=new THREE.PointLight(0xffb4d9,10,18);hlamp.position.set(-8,4,-70);scene.add(hlamp);
 
-// fountain garden
-let pool=new THREE.Mesh(new THREE.CylinderGeometry(4.2,4.2,.28,40),M(0x8ed3e7,.2,.2));pool.position.set(-20,.32,-35);scene.add(pool);let rim=new THREE.Mesh(new THREE.TorusGeometry(4.2,.22,10,40),M(0xe5c2da));rim.rotation.x=Math.PI/2;rim.position.set(-20,.45,-35);scene.add(rim);for(let [r,y,h] of [[1.4,.8,.45],[.85,1.3,.5],[.28,1.8,.6]]){let f=new THREE.Mesh(new THREE.CylinderGeometry(r*.8,r,h,24),gold);f.position.set(-20,y,-35);scene.add(f)}
-function tree(x,z){let t=new THREE.Mesh(new THREE.CylinderGeometry(.2,.35,2.7,9),M(0x885747));t.position.set(x,1.35,z);scene.add(t);ball(1.4,M(0x579879),x,3,z,1,1.2,1);for(let i=0;i<6;i++)ball(.2,M(0xf08cbd),x+(Math.random()-.5)*2,3+Math.random(),z+(Math.random()-.5)*2)}
-function planter(x,z){block(2.8,.55,2,M(0xf5ddea),x,.3,z);for(let i=0;i<9;i++)ball(.22,M(i%2?0xf28fbe:0xffc4df),x+(Math.random()-.5)*2,.75+Math.random()*.5,z+(Math.random()-.5)*1.5)}
-for(let z=-65;z<12;z+=14){tree(-27,z);tree(25,z+4);planter(-12,z);planter(17,z-4);let p=new THREE.Mesh(new THREE.CylinderGeometry(.08,.14,4,10),gold);p.position.set(-7,2,z);scene.add(p);ball(.5,M(0xffe8a9,.2),-7,4,z,.9,.8,.9)}
+// Removed fountain, garden trees, planters and garden props.
 // Expanded luxury shopping district: detailed streets, lighting and architecture
 const sidewalkMat=M(0xffe7f2),roadMat=M(0x8f8291,.92),roadLine=M(0xfff5fa,.8),windowGlow=new THREE.MeshStandardMaterial({color:0xffe4f2,emissive:0xff9bcf,emissiveIntensity:.22,roughness:.25});
 block(5,.12,88,roadMat,0,.02,-30);
@@ -180,98 +176,12 @@ function detailedBuilding(x,z,w,h,d,color,style=0){
 const districtColors=[0xe6a9c9,0xd5b8e8,0xf1c3d8,0xc9c5eb,0xe8c0ad,0xbfcfe5];
 for(let i=0;i<6;i++){let side=i%2===0?-1:1,row=Math.floor(i/2),x=side*23.5,z=-9-row*23;detailedBuilding(x,z,8+row%2,8+row*1.3,8,districtColors[i],i)}
 for(let i=0;i<4;i++){let side=i%2===0?-1:1,x=side*31,z=-18-Math.floor(i/2)*34;detailedBuilding(x,z,7,13,7,districtColors[(i+2)%districtColors.length],i+1)}
-function flowerBed(x,z){block(3.5,.45,1.5,M(0xf8dce9),x,.24,z);for(let i=0;i<9;i++){let fx=x+(Math.random()-.5)*3,fz=z+(Math.random()-.5)*1.1;let stem=new THREE.Mesh(new THREE.CylinderGeometry(.025,.035,.42,6),M(0x5a9b70));stem.position.set(fx,.65,fz);scene.add(stem);ball(.13,M([0xf28cbd,0xffd5e8,0xe9b4e9][i%3]),fx,.9,fz,.9,1.1,.9)}}
-for(let z=-64;z<8;z+=16){flowerBed(-8.3,z);flowerBed(8.3,z+7)}
+// Removed flower beds from the roadside.
 for(let i=0;i<9;i++){let x=-42+i*10,z=-91-(i%3)*5,h=14+(i%4)*5,w=6+(i%3)*2;detailedBuilding(x,z,w,h,7,districtColors[i%districtColors.length],i)}
-const clouds=[];for(let i=0;i<7;i++){let cloud=new THREE.Group();for(let j=0;j<4;j++){let puff=new THREE.Mesh(new THREE.SphereGeometry(1.8+j%2*.35,12,10),new THREE.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.46,depthWrite:false}));puff.position.set(j*1.7,Math.sin(j)*.35,0);cloud.add(puff)}cloud.position.set(-38+i*13,27+(i%3)*2,-52-(i%2)*24);scene.add(cloud);clouds.push(cloud)}
+const clouds=[];
 
-// Real 3D mountain terrain surrounding the outer edge of the city
-function buildMountain(x,z,radius,height,seed,shade){
- const sides=6+(seed%2),geo=new THREE.ConeGeometry(radius,height,sides,3);
- const pos=geo.attributes.position;
- for(let i=0;i<pos.count;i++){
-  const y=pos.getY(i),xx=pos.getX(i),zz=pos.getZ(i);
-  const n=Math.sin((i+seed)*12.9898)*Math.cos((i+seed)*4.1414);
-  if(y>-height*.48){pos.setX(i,xx*(1+n*.075));pos.setZ(i,zz*(1+n*.075));}
-  if(y<height*.15){pos.setY(i,y+n*height*.035);}
- }
- geo.computeVertexNormals();
- const rock=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({color:shade,roughness:1,flatShading:true}));
- rock.position.set(x,height/2-.15,z);rock.castShadow=true;rock.receiveShadow=true;scene.add(rock);
- // pale summit rock/snow patches, shaped as separate 3D caps
- if(height>27){
-  const capH=height*.23,capR=radius*.34;
-  const cap=new THREE.Mesh(new THREE.ConeGeometry(capR,capH,sides,1),M(seed%2?0xe8e7ef:0xf6eaf0,1));
-  cap.position.set(x,height-capH*.42,z);cap.rotation.y=seed*.37;cap.castShadow=true;scene.add(cap);
- }
-}
-const mountainPalette=[0x777f9e,0x8589a8,0x6f7897,0x9693ad,0x747f9b];
-let mountainSeed=1;
-// Back range beyond the far end of the boulevard
-for(let i=0;i<11;i++){
- const x=-52+i*7.5,z=-105-(i%3)*5;
- buildMountain(x,z,17+(i%4)*3,27+(i%5)*6,mountainSeed++,mountainPalette[i%mountainPalette.length]);
-}
-// Left and right ranges follow the full length of the city
-for(let i=0;i<13;i++){
- const z=10-i*7.1;
- buildMountain(-48-(i%3)*4,z,18+(i%4)*2,26+(i%6)*5,mountainSeed++,mountainPalette[(i+2)%mountainPalette.length]);
- buildMountain(48+(i%3)*4,z,18+(i%4)*2,28+(i%5)*6,mountainSeed++,mountainPalette[(i+4)%mountainPalette.length]);
-}
-// Front range closes the far edge behind the player spawn, without blocking the city streets
-for(let i=0;i<13;i++){
- const x=-46+i*7.7,z=36+(i%3)*4;
- buildMountain(x,z,18+(i%3)*3,25+(i%5)*6,mountainSeed++,mountainPalette[(i+1)%mountainPalette.length]);
-}
-
-// Expanded outer world: forest belts, river, lake, bridge, rolling green hills and wildlife
+// Removed mountains, forests, river, lake, bridge, hills, birds and butterflies.
 const natureTrees=[],birds=[],butterflies=[],cars=[];
-const leafMats=[M(0x397d68,1),M(0x4c916f,1),M(0x568b7b,1),M(0x6d9b75,1)];
-function forestTree(x,z,scale=1){
- const g=new THREE.Group();g.position.set(x,0,z);g.scale.setScalar(scale);
- const trunk=new THREE.Mesh(new THREE.CylinderGeometry(.22,.38,3.2,7),M(0x76513f));trunk.position.y=1.6;g.add(trunk);
- for(let j=0;j<3;j++){const crown=new THREE.Mesh(new THREE.IcosahedronGeometry(1.65-j*.18,1),leafMats[(Math.abs(Math.floor(x+z))+j)%leafMats.length]);crown.position.set((j-1)*.48,3.1+j*.75,0);crown.scale.set(1,1.05,.95);crown.castShadow=true;g.add(crown)}
- scene.add(g);natureTrees.push(g);return g;
-}
-// Dense but spaced forest belts just inside the mountain perimeter
-for(let i=0;i<24;i++){
- const z=-78+(i%12)*7.7,side=i<12?-1:1,x=side*(32+(i%3)*2.2);
- forestTree(x,z,.8+(i%4)*.12);
-}
-for(let i=0;i<14;i++){
- const x=-38+(i%7)*12.3,z=i<7?-83:20;
- forestTree(x,z,.85+(i%3)*.15);
-}
-// A winding blue river along the eastern edge, with a small reflective lake
-const waterMat=new THREE.MeshStandardMaterial({color:0x66c4dc,roughness:.16,metalness:.18,transparent:true,opacity:.88});
-const riverPath=new THREE.CatmullRomCurve3([
- new THREE.Vector3(39,0,-91),new THREE.Vector3(36,0,-72),new THREE.Vector3(40,0,-54),
- new THREE.Vector3(36,0,-34),new THREE.Vector3(40,0,-14),new THREE.Vector3(37,0,8),new THREE.Vector3(40,0,31)
-]);
-const river=new THREE.Mesh(new THREE.TubeGeometry(riverPath,100,3.2,12,false),waterMat);river.position.y=.12;scene.add(river);
-const lake=new THREE.Mesh(new THREE.CircleGeometry(10,48),waterMat);lake.rotation.x=-Math.PI/2;lake.position.set(39,.16,-70);lake.scale.set(1,.72,1);scene.add(lake);
-const lakeRim=new THREE.Mesh(new THREE.TorusGeometry(10,.32,8,48),M(0xc9b8a5));lakeRim.rotation.x=Math.PI/2;lakeRim.position.set(39,.2,-70);lakeRim.scale.set(1,.72,1);scene.add(lakeRim);
-// A graceful pedestrian bridge crossing the river
-const bridge=block(12,.45,3.2,M(0xe8d4df),37,.95,-30);bridge.rotation.y=Math.PI/2;
-for(let side of [-1,1]){let rail=block(12,.18,.16,gold,37,1.8,-30+side*1.35);rail.rotation.y=Math.PI/2;for(let j=0;j<7;j++){let post=block(.14,.85,.14,gold,32+j*1.65,1.45,-30+side*1.35);}}
-for(let i=0;i<13;i++){
- const x=-39+i*6.5,z=-88+(i%4)*3;
- const hill=new THREE.Mesh(new THREE.SphereGeometry(7,16,10),M(i%2?0x91b18c:0x9dbb91,1));
- hill.scale.set(1,.38,1.4);hill.position.set(x,-1.4,z);scene.add(hill);
-}
-// Small animated birds in the open sky
-function makeBird(x,y,z){
- const g=new THREE.Group(),wingMat=M(0x665b79,.8);
- for(let side of [-1,1]){const wing=new THREE.Mesh(new THREE.ConeGeometry(.22,1.35,4),wingMat);wing.rotation.z=side*.95;wing.position.x=side*.55;g.add(wing)}
- g.position.set(x,y,z);scene.add(g);birds.push({g,phase:Math.random()*6,speed:1.1+Math.random()*.55,baseY:y});
-}
-for(let i=0;i<7;i++)makeBird(-25+i*8,19+(i%3)*2,-55-(i%4)*9);
-// Butterflies flutter near the garden edges
-for(let i=0;i<8;i++){
- const g=new THREE.Group(),wingMat=new THREE.MeshBasicMaterial({color:i%2?0xffa9d4:0xffe6a4,side:THREE.DoubleSide});
- for(let side of [-1,1]){const w=new THREE.Mesh(new THREE.CircleGeometry(.19,10),wingMat);w.position.x=side*.18;w.scale.set(1.2,.8,1);g.add(w)}
- g.position.set(-9+(i%4)*6,.9+(i%3)*.35,-12-Math.floor(i/4)*28);scene.add(g);butterflies.push({g,phase:i*.8,origin:g.position.clone()});
-}
 // Road-bound traffic: one continuous rounded loop entirely inside the main boulevard.
 const trafficRoute=new THREE.CatmullRomCurve3([
  new THREE.Vector3(-1.15,.04,-70),new THREE.Vector3(-1.15,.04,7),
@@ -291,8 +201,7 @@ function makeCar(u,color){
 }
 for(let i=0;i<4;i++)makeCar(i/4,[0xe94f9e,0xf3d9e8,0x8e83b8,0xd7a34e][i]);
 
-// entry arch
-for(let x of [-7,7]){let c=new THREE.Mesh(new THREE.CylinderGeometry(.35,.48,7,16),gold);c.position.set(x,3.5,-53);scene.add(c)}let arch=new THREE.Mesh(new THREE.TorusGeometry(7,.32,12,48,Math.PI),gold);arch.position.set(0,5,-53);scene.add(arch);
+// Removed the extra decorative arch; the main city gate remains.;
 // all-female stylized pedestrians
 // Shared anime-style face details and naturally timed blinking for every girl character.
 function addAnimeFace(parent,{x=0,y=0,z=0,scale=1,skinMat,hairMat,irisMat}={}){
@@ -487,7 +396,7 @@ applySettings();
 window.__roseCityStart=()=>{if(started)return;started=true;$('welcome').style.display='none';$('hud').style.display='block';last=performance.now();};
 $('visit').onclick=()=>location.href=selectedUrl;
 $('back').onclick=()=>{$('shop').style.display='none';open=false};
-$('enter').onclick=()=>{let fashionDistance=Math.hypot(player.position.x-8,player.position.z+27),handmadeDistance=Math.hypot(player.position.x+8,player.position.z+27);let fashion=fashionDistance<=handmadeDistance;selectedShop=fashion?'fashion':'handmade';selectedUrl=fashion?'https://2002roshanmotion-ops.github.io/rosemmoon-fashion/':'https://2002roshanmotion-ops.github.io/Rosemoon/';$('shopTitle').textContent=fashion?'RoseMmoon Fashion':'Rosemoon Handmade';$('shopTag').textContent=fashion?'Let Your Beauty Speak':'Handmade with Love';$('shopDescription').textContent=fashion?'Explore clothing, dresses and fashion collections.':'Explore handmade Fuji wire bouquets.';$('visit').textContent=fashion?'OPEN FASHION WEBSITE':'OPEN HANDMADE WEBSITE';$('shop').style.display='grid';open=true};
+$('enter').onclick=()=>{let fashionDistance=Math.hypot(player.position.x-11,player.position.z+27),handmadeDistance=Math.hypot(player.position.x+11,player.position.z+27);let fashion=fashionDistance<=handmadeDistance;selectedShop=fashion?'fashion':'handmade';selectedUrl=fashion?'https://2002roshanmotion-ops.github.io/rosemmoon-fashion/':'https://2002roshanmotion-ops.github.io/Rosemoon/';$('shopTitle').textContent=fashion?'RoseMmoon Fashion':'Rosemoon Handmade';$('shopTag').textContent=fashion?'Let Your Beauty Speak':'Handmade with Love';$('shopDescription').textContent=fashion?'Explore clothing, dresses and fashion collections.':'Explore handmade Fuji wire bouquets.';$('visit').textContent=fashion?'OPEN FASHION WEBSITE':'OPEN HANDMADE WEBSITE';$('shop').style.display='grid';open=true};
 function loop(now){requestAnimationFrame(loop);if(started)blinkCharacter(playerFaceEyes,playerBlinkState,now);let dt=Math.min((now-last)/1000,.04);last=now;if(started&&!open){let x=input.x+(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0),y=input.y+(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0),len=Math.hypot(x,y);if(len>1){x/=len;y/=len}let moveX=0,moveZ=0;if(len>.06){let sp=input.run?8.5:5;moveX=x*Math.cos(cameraYaw)+y*Math.sin(cameraYaw);moveZ=-x*Math.sin(cameraYaw)+y*Math.cos(cameraYaw);let targetYaw=Math.atan2(moveX,moveZ),angleDelta=Math.atan2(Math.sin(targetYaw-player.rotation.y),Math.cos(targetYaw-player.rotation.y));player.rotation.y+=angleDelta*Math.min(1,dt*12)}let moving=len>.06,walkRate=input.run?12:8,gait=now*.001*walkRate;
 if(physicsWorld&&playerBody){
  const speed=input.run?8.5:5;
@@ -500,12 +409,13 @@ if(physicsWorld&&playerBody){
  if(moving){let sp=input.run?8.5:5;player.position.x=THREE.MathUtils.clamp(player.position.x+moveX*sp*dt,-42,42);player.position.z=THREE.MathUtils.clamp(player.position.z+moveZ*sp*dt,-76,12)}
  if(jumpVelocity!==0||player.position.y>0){jumpVelocity-=18*dt;player.position.y=Math.max(0,player.position.y+jumpVelocity*dt);if(player.position.y===0)jumpVelocity=0}
 }
-limbs.forEach(l=>{let swing=moving?Math.sin(gait)*(input.run?1.12:.95)*l.side:Math.sin(now*.0015)*.018*l.side;l.legPivot.rotation.x=swing;l.armPivot.rotation.x=moving?-swing*.95:Math.sin(now*.0015)*.012*l.side});playerRig.position.y=0;playerRig.rotation.z=moving?THREE.MathUtils.clamp(-x*.055,-.07,.07):0;let orbitRadius=cameraDistance,camTarget=new THREE.Vector3(player.position.x+Math.sin(cameraYaw)*Math.cos(cameraPitch)*orbitRadius,player.position.y+1.3+Math.sin(cameraPitch)*orbitRadius,player.position.z+Math.cos(cameraYaw)*Math.cos(cameraPitch)*orbitRadius);const followSmooth=1-Math.exp(-12*dt);camera.position.lerp(camTarget,followSmooth);camera.lookAt(player.position.x,player.position.y+1.3,player.position.z);clouds.forEach((c,i)=>{c.position.x+=dt*(.35+i*.025);if(c.position.x>48)c.position.x=-48});natureTrees.forEach((t,i)=>{t.rotation.z=Math.sin(now*.00055+i)*.018});birds.forEach((b,i)=>{b.g.position.x+=dt*b.speed;if(b.g.position.x>52)b.g.position.x=-52;b.g.position.y=b.baseY+Math.sin(now*.003+i)*.55;b.g.children.forEach((w,j)=>{w.rotation.z=Math.sin(now*.012+i)*.45*(j===0?1:-1)})});butterflies.forEach((b,i)=>{b.phase+=dt*3;b.g.position.x=b.origin.x+Math.sin(b.phase)*1.3;b.g.position.y=b.origin.y+Math.sin(b.phase*2)*.35;b.g.position.z=b.origin.z+Math.cos(b.phase)*.8;b.g.rotation.y=Math.sin(b.phase)*.8});cars.forEach(c=>{
+limbs.forEach(l=>{let swing=moving?Math.sin(gait)*(input.run?1.12:.95)*l.side:Math.sin(now*.0015)*.018*l.side;l.legPivot.rotation.x=swing;l.armPivot.rotation.x=moving?-swing*.95:Math.sin(now*.0015)*.012*l.side});playerRig.position.y=0;playerRig.rotation.z=moving?THREE.MathUtils.clamp(-x*.055,-.07,.07):0;let orbitRadius=cameraDistance,camTarget=new THREE.Vector3(player.position.x+Math.sin(cameraYaw)*Math.cos(cameraPitch)*orbitRadius,player.position.y+1.3+Math.sin(cameraPitch)*orbitRadius,player.position.z+Math.cos(cameraYaw)*Math.cos(cameraPitch)*orbitRadius);const followSmooth=1-Math.exp(-12*dt);camera.position.lerp(camTarget,followSmooth);camera.lookAt(player.position.x,player.position.y+1.3,player.position.z);// Decorative scenery animation removed.
+cars.forEach(c=>{
  if(c.wait>0){c.wait=Math.max(0,c.wait-dt);return}
  const advance=c.speed*dt/trafficLength,stop=trafficStops[c.nextStop],untilStop=(stop-c.u+1)%1;
  if(untilStop<advance+.001){c.u=stop;c.wait=2.4;c.nextStop=(c.nextStop+1)%trafficStops.length}
  else c.u=(c.u+advance)%1;
  const p=trafficRoute.getPointAt(c.u),t=trafficRoute.getTangentAt(c.u);
  c.g.position.copy(p);c.g.rotation.y=Math.atan2(t.x,t.z);
-});women.forEach(w=>{blinkCharacter(w.faceEyes,w.blinkState,now);w.phase+=dt*w.speed*7;w.g.position.z+=w.direction*w.speed*dt;if(w.g.position.z>w.originZ+w.range){w.g.position.z=w.originZ+w.range;w.direction=-1}else if(w.g.position.z<w.originZ-w.range){w.g.position.z=w.originZ-w.range;w.direction=1}w.g.rotation.y=w.direction>0?0:Math.PI;let swing=Math.sin(w.phase)*.72;w.limbs.forEach(l=>{l.legPivot.rotation.x=swing*l.side;l.armPivot.rotation.x=-swing*l.side*.9});w.body.position.y=Math.abs(Math.sin(w.phase*2))*.03});let fashionDistance=Math.hypot(player.position.x-8,player.position.z+27),handmadeDistance=Math.hypot(player.position.x+8,player.position.z+27),nearFashion=fashionDistance<9,nearHandmade=handmadeDistance<9,near=nearFashion||nearHandmade;$('enter').classList.toggle('show',near);$('enter').textContent=nearHandmade&&(!nearFashion||handmadeDistance<fashionDistance)?'ENTER HANDMADE':'ENTER FASHION';$('hint').textContent=nearFashion&&nearHandmade?'Choose a boutique':nearFashion?'RoseMmoon Fashion':nearHandmade?'Rosemoon Handmade':'Explore the city and find either RoseMmoon boutique'}renderer.render(scene,camera)}function finishCityLoading(){if(cityFinishQueued||!window.__roseCityReady)return;cityFinishQueued=true;if(window.__roseLoadProgress)window.__roseLoadProgress(100,'RoseMmoon City is ready!');$('loading').style.display='none';$('welcome').style.display='grid'}window.__roseCityReady=true;pendingLogoAssets=0;finishCityLoading();requestAnimationFrame(loop);addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();const q=savedSettings.quality||'medium';renderer.setPixelRatio(q==='low'?Math.min(devicePixelRatio,.85):q==='medium'?Math.min(devicePixelRatio,1.1):Math.min(devicePixelRatio,1.35));renderer.setSize(innerWidth,innerHeight)});
+});women.forEach(w=>{blinkCharacter(w.faceEyes,w.blinkState,now);w.phase+=dt*w.speed*7;w.g.position.z+=w.direction*w.speed*dt;if(w.g.position.z>w.originZ+w.range){w.g.position.z=w.originZ+w.range;w.direction=-1}else if(w.g.position.z<w.originZ-w.range){w.g.position.z=w.originZ-w.range;w.direction=1}w.g.rotation.y=w.direction>0?0:Math.PI;let swing=Math.sin(w.phase)*.72;w.limbs.forEach(l=>{l.legPivot.rotation.x=swing*l.side;l.armPivot.rotation.x=-swing*l.side*.9});w.body.position.y=Math.abs(Math.sin(w.phase*2))*.03});let fashionDistance=Math.hypot(player.position.x-11,player.position.z+27),handmadeDistance=Math.hypot(player.position.x+11,player.position.z+27),nearFashion=fashionDistance<9,nearHandmade=handmadeDistance<9,near=nearFashion||nearHandmade;$('enter').classList.toggle('show',near);$('enter').textContent=nearHandmade&&(!nearFashion||handmadeDistance<fashionDistance)?'ENTER HANDMADE':'ENTER FASHION';$('hint').textContent=nearFashion&&nearHandmade?'Choose a boutique':nearFashion?'RoseMmoon Fashion':nearHandmade?'Rosemoon Handmade':'Explore the city and find either RoseMmoon boutique'}renderer.render(scene,camera)}function finishCityLoading(){if(cityFinishQueued||!window.__roseCityReady)return;cityFinishQueued=true;if(window.__roseLoadProgress)window.__roseLoadProgress(100,'RoseMmoon City is ready!');$('loading').style.display='none';$('welcome').style.display='grid'}window.__roseCityReady=true;pendingLogoAssets=0;finishCityLoading();requestAnimationFrame(loop);addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();const q=savedSettings.quality||'medium';renderer.setPixelRatio(q==='low'?Math.min(devicePixelRatio,.85):q==='medium'?Math.min(devicePixelRatio,1.1):Math.min(devicePixelRatio,1.35));renderer.setSize(innerWidth,innerHeight)});
 </script></body></html>
