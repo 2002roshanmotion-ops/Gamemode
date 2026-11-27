@@ -142,36 +142,83 @@ function signText(title,subtitle,x,y,z,w,h){const canvas=document.createElement(
 
 
 const sidewalkMat=M(0xd98bb8),roadMat=M(0x8f8291,.92),roadLine=M(0xfff5fa,.8),windowGlow=new THREE.MeshStandardMaterial({color:0xffe4f2,emissive:0xff9bcf,emissiveIntensity:.22,roughness:.25});
-const tunnelZone={front:-58,back:-86.4,halfW:5.2};   // used by the tunnel and by the camera while you walk through it
+// ---- Detail helpers: anything repeated is drawn as ONE instanced mesh, so the extra detail stays light on phones. ----
+const _obj=new THREE.Object3D(),_col=new THREE.Color();
+function inst(geo,mat,items){
+ if(!items.length)return null;
+ const m=new THREE.InstancedMesh(geo,mat,items.length);
+ items.forEach((it,i)=>{
+  _obj.position.set(it.x,it.y,it.z);_obj.rotation.set(it.rx||0,it.ry||0,it.rz||0);
+  _obj.scale.set(it.sx===undefined?1:it.sx,it.sy===undefined?1:it.sy,it.sz===undefined?1:it.sz);_obj.updateMatrix();
+  m.setMatrixAt(i,_obj.matrix);if(it.c!==undefined)m.setColorAt(i,_col.setHex(it.c));
+ });
+ m.instanceMatrix.needsUpdate=true;if(m.instanceColor)m.instanceColor.needsUpdate=true;scene.add(m);return m;
+}
+const rr=(a=0,b=1)=>a+Math.random()*(b-a),pick=a=>a[Math.floor(Math.random()*a.length)];
+function canvasTex(draw,size,rx,ry){const cv=document.createElement('canvas');cv.width=cv.height=size;draw(cv.getContext('2d'),size);const t=new THREE.CanvasTexture(cv);t.colorSpace=THREE.SRGBColorSpace;t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(rx,ry);t.anisotropy=2;return t}
+// Textures tinted by the existing material colours: paving tiles, asphalt grain, pavement stones and meadow grass.
+pave.map=canvasTex((c,s)=>{c.fillStyle='#d6b6c8';c.fillRect(0,0,s,s);for(let i=0;i<4;i++)for(let j=0;j<4;j++){const v=244+Math.floor(Math.random()*12);c.fillStyle='rgb('+v+','+(v-3)+','+v+')';c.fillRect(i*s/4+2,j*s/4+2,s/4-4,s/4-4)}},256,13,13);
+roadMat.map=canvasTex((c,s)=>{c.fillStyle='#fff';c.fillRect(0,0,s,s);for(let k=0;k<900;k++){c.fillStyle=Math.random()<.5?'rgba(80,60,90,.10)':'rgba(255,255,255,.14)';c.fillRect(Math.random()*s,Math.random()*s,1+Math.random()*2,1+Math.random()*2)}},128,1,10);
+sidewalkMat.map=canvasTex((c,s)=>{c.fillStyle='#e3bdd3';c.fillRect(0,0,s,s);for(let r=0;r<4;r++)for(let q=0;q<4;q++){const v=246+Math.floor(Math.random()*9);c.fillStyle='rgb('+v+','+(v-8)+','+v+')';for(const o of [0,-s])c.fillRect(q*s/4+(r%2?s/8:0)+o+1.5,r*s/4+1.5,s/4-3,s/4-3)}},128,1,22);
+const grassMat=M(0x9cc79a,.95);
+grassMat.map=canvasTex((c,s)=>{c.fillStyle='#fff';c.fillRect(0,0,s,s);for(let k=0;k<420;k++){c.fillStyle=Math.random()<.5?'rgba(40,110,60,.16)':'rgba(255,255,220,.18)';c.fillRect(Math.random()*s,Math.random()*s,1.5,4+Math.random()*5)}},128,26,3);
+// Plants (trees, shrubs, flowers, grass tufts) are collected here and built as instanced meshes by flushPlants().
+const plants={trunks:[],crowns:[],shadows:[],petals:[],shrubs:[],flowers:[],tufts:[]};
+const leafColors=[0x5fa06f,0x74b07f,0x4a8f64,0x8cc08a],sakuraColors=[0xffc4de,0xf9a9cc,0xffd9e8],flowerColors=[0xff8fc8,0xffffff,0xffe28a,0xc9a8ff,0xff7aa8],grassColors=[0x6fae73,0x86c086,0x5b9a68];
+function plantTree(x,y,z,s=1,{sakura=Math.random()<.3,far=false,shadow=true}={}){
+ plants.trunks.push({x,y:y+1.2*s,z,sx:s,sy:s,sz:s});
+ const cols=sakura?sakuraColors:leafColors,c0=pick(cols);
+ const blobs=far?[[0,3.5,0,1.7],[.9,2.9,-.3,1.2]]:[[0,3.5,0,1.7],[-.95,2.9,.3,1.2],[.9,3,-.35,1.25]];
+ blobs.forEach(([bx,by,bz,br],k)=>plants.crowns.push({x:x+bx*s,y:y+by*s,z:z+bz*s,sx:br*s,sy:br*s*.88,sz:br*s,ry:rr(0,6),c:k?pick(cols):c0}));
+ if(shadow)plants.shadows.push({x,y:.035,z,sx:2.1*s,sy:1,sz:2.1*s});
+ if(sakura&&shadow)for(let k=0;k<6;k++)plants.petals.push({x:x+rr(-2.3,2.3)*s,y:.045,z:z+rr(-2.3,2.3)*s,ry:rr(0,6),c:pick(sakuraColors)});
+}
+function plantShrub(x,y,z,s=1){plants.shrubs.push({x,y:y+.3*s,z,sx:s,sy:s*.7,sz:s,c:pick(leafColors)})}
+function flowerPatch(x,z,n=6,r=.9,y=.14){
+ for(let k=0;k<n;k++)plants.flowers.push({x:x+rr(-r,r),y:y+rr(0,.1),z:z+rr(-r,r),sx:rr(.8,1.4),sy:rr(.8,1.4),sz:rr(.8,1.4),c:pick(flowerColors)});
+ for(let k=0;k<n;k++)plants.tufts.push({x:x+rr(-r,r),y:y-.12,z:z+rr(-r,r),sx:rr(.8,1.2),sy:rr(.5,1),sz:rr(.8,1.2),c:pick(grassColors)});
+}
+function tuft(x,y,z,s=1){plants.tufts.push({x,y,z,sx:s,sy:rr(.7,1.5)*s,sz:s,rz:rr(-.25,.25),c:pick(grassColors)})}
+function flushPlants(){
+ inst(new THREE.CylinderGeometry(.2,.32,2.4,7),M(0x76513d,.95),plants.trunks);
+ inst(new THREE.IcosahedronGeometry(1,1),M(0xffffff,.88),plants.crowns);
+ inst(new THREE.CircleGeometry(1,12).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({color:0x2a1830,transparent:true,opacity:.16,depthWrite:false}),plants.shadows);
+ inst(new THREE.CircleGeometry(.14,5).rotateX(-Math.PI/2),new THREE.MeshBasicMaterial({color:0xffffff,side:THREE.DoubleSide}),plants.petals);
+ inst(new THREE.IcosahedronGeometry(.5,1),M(0xffffff,.9),plants.shrubs);
+ inst(new THREE.IcosahedronGeometry(.11,0),M(0xffffff,.6),plants.flowers);
+ inst(new THREE.ConeGeometry(.09,.55,4).translate(0,.27,0),M(0xffffff,.9),plants.tufts);
+}
+pave.needsUpdate=true;roadMat.needsUpdate=true;sidewalkMat.needsUpdate=true;grassMat.needsUpdate=true;
 // Hill with a real, walkable tunnel straight ahead of the entrance gate.
 // The hill is one extruded outline (a bell-shaped hill with a tunnel notch cut into its base), so the bore is true
-// hollow geometry: you walk through the hill and come out on the far side onto a small plaza.
+// hollow geometry: you walk through the hill and come out on the far side onto a plaza with a fountain.
+const tunnelZone={front:-58,back:-86.4,halfW:5.2};   // used by the tunnel and by the camera while you walk through it
 {
- const hillZFront=tunnelZone.front-.4,hillLen=28,halfW=40,hillH=22;   // hill base: x ±40, z -58.4 … -86.4
+ const hillZFront=tunnelZone.front-.4,hillLen=28,halfW=40,hillH=22,hillBack=hillZFront-hillLen;   // hill base: x ±40, z -58.4 … -86.4
  const bw=tunnelZone.halfW,bwall=3.4,bapex=bwall+bw;                   // tunnel: 10.4 wide, 8.6 high at the crown
  const smooth=(a,b,v)=>{const t=Math.min(1,Math.max(0,(v-a)/(b-a)));return t*t*(3-2*t)};
  const archTop=x=>Math.abs(x)>=bw?bwall:bwall+Math.sqrt(bw*bw-x*x);
+ const outerY=x=>hillH*Math.pow(Math.max(0,Math.cos(Math.PI*x/(2*halfW))),1.5);
+ // One transform shared by the mesh and by the code that plants things on it: lower toward both ends (never below
+ // the tunnel crown), roughen the surface, and lean both end faces back so each portal is cut into a hillside.
+ const warp=(x,y,zz,bore)=>{
+  const d=Math.min(zz,hillLen-zz);
+  if(!bore){const f=.55+.45*smooth(0,14,d);const n=(Math.sin(x*.31+zz*.17)*Math.cos(zz*.23-x*.11)*1.1+Math.sin(x*.73+zz*.61)*.3)*Math.min(1,y/6);y=y*f+n}
+  const lean=.35*y*(1-smooth(0,10,d));
+  return [y,zz+(zz<hillLen/2?lean:-lean)];
+ };
  // Outline: over the hill from left to right, then back along the ground and up through the tunnel notch.
  const outline=new THREE.Shape();outline.moveTo(-halfW,0);
- for(let i=1;i<=34;i++){const x=-halfW+i*(2*halfW)/34;outline.lineTo(x,hillH*Math.pow(Math.max(0,Math.cos(Math.PI*x/(2*halfW))),1.5))}
+ for(let i=1;i<=34;i++){const x=-halfW+i*(2*halfW)/34;outline.lineTo(x,outerY(x))}
  outline.lineTo(bw,0);outline.lineTo(bw,bwall);
  for(let k=1;k<=14;k++){const a=k*Math.PI/14;outline.lineTo(bw*Math.cos(a),bwall+bw*Math.sin(a))}
  outline.lineTo(-bw,0);outline.closePath();
  const hillGeo=new THREE.ExtrudeGeometry(outline,{depth:hillLen,steps:28,bevelEnabled:false});
  const pos=hillGeo.attributes.position,isBore=new Uint8Array(pos.count);
  for(let i=0;i<pos.count;i++){
-  const x=pos.getX(i);let y=pos.getY(i),zz=pos.getZ(i);
+  const x=pos.getX(i),y=pos.getY(i),zz=pos.getZ(i);
   const bore=Math.abs(x)<=bw+.001&&y<=archTop(x)+.001;isBore[i]=bore?1:0;
-  const d=Math.min(zz,hillLen-zz);                                     // distance to the nearer end of the hill
-  if(!bore){
-   // lower toward both ends (never below the tunnel crown) and roughen the surface; the ground line stays flat
-   const f=.55+.45*smooth(0,14,d);
-   const n=(Math.sin(x*.31+zz*.17)*Math.cos(zz*.23-x*.11)*1.1+Math.sin(x*.73+zz*.61)*.3)*Math.min(1,y/6);
-   y=y*f+n;
-  }
-  // lean both end faces back so each portal is cut into a hillside instead of a vertical wall
-  const lean=.35*y*(1-smooth(0,10,d));
-  pos.setXYZ(i,x,y,zz+(zz<hillLen/2?lean:-lean));
+  const w=warp(x,y,zz,bore);pos.setXYZ(i,x,w[0],w[1]);
  }
  hillGeo.computeVertexNormals();                                       // flat, faceted rock-and-grass look
  const nrm=hillGeo.attributes.normal,colors=new Float32Array(pos.count*3);
@@ -185,34 +232,90 @@ const tunnelZone={front:-58,back:-86.4,halfW:5.2};   // used by the tunnel and b
  }
  hillGeo.setAttribute('color',new THREE.BufferAttribute(colors,3));
  const hill=new THREE.Mesh(hillGeo,new THREE.MeshStandardMaterial({vertexColors:true,roughness:.95,metalness:0,side:THREE.DoubleSide}));
- hill.position.set(0,0,hillZFront-hillLen);scene.add(hill);
+ hill.position.set(0,0,hillBack);scene.add(hill);
 
- // Road and pavements run from the gate, through the tunnel, to the plaza; dashed centre line.
- const roadLen=47,roadZ=-73.5;
+ // Life on the hill: trees, grass, flowers and rock outcrops planted exactly on the mesh vertices.
+ const onHill=(i,j)=>{const x=-halfW+i*(2*halfW)/34,w=warp(x,outerY(x),j,false);return {x,y:w[0],z:hillBack+w[1]}};
+ const rnd=n=>Math.floor(Math.random()*n);
+ for(let k=0;k<14;k++){const p=onHill(2+rnd(31),7+rnd(15));if(p.y>2)plantTree(p.x,p.y-.35,p.z,rr(1.1,1.8),{shadow:false})}
+ for(let k=0;k<90;k++){const p=onHill(1+rnd(33),6+rnd(17));tuft(p.x,p.y-.05,p.z,rr(.9,1.4))}
+ for(let k=0;k<12;k++){const p=onHill(3+rnd(29),7+rnd(15));flowerPatch(p.x,p.z,4,.7,p.y+.02)}
+ inst(new THREE.IcosahedronGeometry(1,0),M(0xffffff,.95),Array.from({length:20},()=>{const p=onHill(1+rnd(33),5+rnd(19));const s=rr(.45,1.1);return {x:p.x,y:p.y-.1,z:p.z,sx:s*1.2,sy:s*.8,sz:s,ry:rr(0,6),c:pick([0x817d8b,0x9b96a3,0x8a8594])}}));
+
+ // Road and pavements run from the end of the boulevard, through the tunnel, to the plaza.
+ const roadLen=40,roadZ=-77;
  block(5,.12,roadLen,roadMat,0,.02,roadZ);
  block(2.4,.16,roadLen,sidewalkMat,-3.7,.1,roadZ);block(2.4,.16,roadLen,sidewalkMat,3.7,.1,roadZ);
- for(let z=-52;z>-94;z-=4)block(.2,.02,1.6,roadLine,0,.09,z);
+ for(const sx of [-1,1])block(.08,.18,roadLen,gold,sx*2.52,.1,roadZ);
 
- // Small plaza and meadow where the tunnel comes out.
- const plazaZ=hillZFront-hillLen-6.6;
- const plaza=new THREE.Mesh(new THREE.CylinderGeometry(7,7,.14,40),sidewalkMat);plaza.position.set(0,.06,plazaZ);scene.add(plaza);
+ // Plaza and meadow where the tunnel comes out, with a small rose fountain.
+ const plazaZ=hillBack-6.6;
+ const plazaMat=sidewalkMat.clone();plazaMat.map=sidewalkMat.map.clone();plazaMat.map.repeat.set(5,5);plazaMat.map.needsUpdate=true;
+ const plaza=new THREE.Mesh(new THREE.CylinderGeometry(7,7,.14,40),plazaMat);plaza.position.set(0,.06,plazaZ);scene.add(plaza);
  const plazaRim=new THREE.Mesh(new THREE.CylinderGeometry(7.45,7.45,.1,40),gold);plazaRim.position.set(0,.03,plazaZ);scene.add(plazaRim);
- block(130,.3,15,M(0x9cc79a,.95),0,-.2,-102.5);
+ block(130,.3,15,grassMat,0,-.2,-102.5);
  const poleMat=M(0xd9a34e,.3,.65),bulbMat=new THREE.MeshStandardMaterial({color:0xffe1f1,emissive:0xff9fd0,emissiveIntensity:1.1,roughness:.3});
  for(const sx of [-1,1]){block(.18,2.6,.18,poleMat,sx*5.8,1.3,plazaZ);ball(.34,bulbMat,sx*5.8,2.75,plazaZ)}
+ {
+  const stoneW=M(0xf7e8f0,.7),water=new THREE.MeshStandardMaterial({color:0xa9d8ff,roughness:.12,metalness:.1,transparent:true,opacity:.85});
+  const basin=new THREE.Mesh(new THREE.CylinderGeometry(2.2,2.4,.55,28),stoneW);basin.position.set(0,.3,plazaZ);scene.add(basin);
+  const rim=new THREE.Mesh(new THREE.TorusGeometry(2.25,.09,8,28),gold);rim.rotation.x=Math.PI/2;rim.position.set(0,.58,plazaZ);scene.add(rim);
+  const pool=new THREE.Mesh(new THREE.CylinderGeometry(2.1,2.1,.04,28),water);pool.position.set(0,.5,plazaZ);scene.add(pool);
+  const column=new THREE.Mesh(new THREE.CylinderGeometry(.22,.4,1.9,14),stoneW);column.position.set(0,1.4,plazaZ);scene.add(column);
+  const bowl=new THREE.Mesh(new THREE.SphereGeometry(1,18,8,0,Math.PI*2,Math.PI/2,Math.PI/2),stoneW);bowl.material=stoneW.clone();bowl.material.side=THREE.DoubleSide;bowl.scale.set(1.1,.9,1.1);bowl.position.set(0,1.95,plazaZ);scene.add(bowl);
+  const bowlWater=new THREE.Mesh(new THREE.CylinderGeometry(.95,.95,.03,20),water);bowlWater.position.set(0,1.78,plazaZ);scene.add(bowlWater);
+  ball(.2,gold,0,2.45,plazaZ);
+  makeStaticCollider(0,.6,plazaZ,4.4,1.2,4.4);
+  for(let k=0;k<8;k++){const a=k/8*Math.PI*2;plantShrub(Math.cos(a)*3.6,0,plazaZ+Math.sin(a)*3.6,.8);flowerPatch(Math.cos(a+.2)*3.7,plazaZ+Math.sin(a+.2)*3.7,3,.5,.2)}
+ }
+ flowerPatch(-9,hillZFront+2.4,7,1.1);flowerPatch(9,hillZFront+2.4,7,1.1);flowerPatch(-9,hillBack-2.4,7,1.1);flowerPatch(9,hillBack-2.4,7,1.1);
 
  // Natural boulders at the foot of each portal.
  const boulder=M(0x8a8594,.95),boulderLight=M(0x9b96a3,.9);
  for(const sx of [-1,1]){
   ball(1.6,boulder,sx*7.4,.8,hillZFront+.6,1.15,.7,.9);ball(1,boulderLight,sx*9.3,.5,hillZFront+1.4,1,.65,1);
-  ball(1.5,boulder,sx*7.2,.75,hillZFront-hillLen-.6,1.1,.7,.9);ball(.95,boulderLight,sx*9,.45,hillZFront-hillLen-1.4,1,.65,1);
+  ball(1.5,boulder,sx*7.2,.75,hillBack-.6,1.1,.7,.9);ball(.95,boulderLight,sx*9,.45,hillBack-1.4,1,.65,1);
  }
 
- // Ceiling lamps: glowing fixtures with four soft pink lights along the tunnel.
- for(const z of [-63,-69,-75,-81]){
-  block(2.2,.16,.4,bulbMat,0,bapex-.25,z);
-  const l=new THREE.PointLight(0xffc5e5,16,13);l.position.set(0,6.6,z);scene.add(l);
+ // Tunnel dressing: wooden arch ribs, wall sconces, glowing ceiling fixtures and two soft pink lights.
+ const wood=M(0x5b4766,.7,.1),ribZ=[-64.5,-70.5,-76.5,-82];
+ inst(new THREE.TorusGeometry(bw-.06,.15,6,18,Math.PI),wood,ribZ.map(z=>({x:0,y:bwall,z})));
+ inst(new THREE.BoxGeometry(.3,bwall,.3),wood,ribZ.flatMap(z=>[-1,1].map(s=>({x:s*(bw-.06),y:bwall/2,z}))));
+ const sconceZ=[-61,-67.5,-73.5,-79.5,-85];
+ inst(new THREE.IcosahedronGeometry(.17,1),bulbMat,sconceZ.flatMap(z=>[-1,1].map(s=>({x:s*(bw-.22),y:2.7,z}))));
+ inst(new THREE.BoxGeometry(.12,.5,.12),wood,sconceZ.flatMap(z=>[-1,1].map(s=>({x:s*(bw-.1),y:2.35,z}))));
+ for(const z of [-67.5,-73.5,-79.5])block(2.2,.16,.4,bulbMat,0,bapex-.25,z);
+ for(const z of [-68,-78]){const l=new THREE.PointLight(0xffc5e5,26,16);l.position.set(0,6.6,z);scene.add(l)}
+
+ // Portal signs on the sloping faces (front: city side, back: meadow side).
+ const makeSign=(title,sub)=>{
+  const cv=document.createElement('canvas');cv.width=1024;cv.height=240;const c=cv.getContext('2d');
+  const g=c.createLinearGradient(0,0,0,240);g.addColorStop(0,'#c8337f');g.addColorStop(1,'#8d1f5c');c.fillStyle=g;
+  c.beginPath();if(c.roundRect)c.roundRect(8,8,1008,224,48);else c.rect(8,8,1008,224);c.fill();
+  c.lineWidth=10;c.strokeStyle='#e9bd78';c.stroke();
+  c.fillStyle='#fff3f9';c.textAlign='center';c.textBaseline='middle';c.font='bold 100px Georgia';c.fillText(title,512,100);
+  c.fillStyle='#f7d9a0';c.font='bold 44px Georgia';c.fillText(sub,512,190);
+  const t=new THREE.CanvasTexture(cv);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=2;return t;
+ };
+ const signGeo=new THREE.PlaneGeometry(6,1.4),tilt=Math.atan(.35);
+ const frontSign=new THREE.Mesh(signGeo,new THREE.MeshBasicMaterial({map:makeSign('♛ RoseMmoon Tunnel','Through the hill to the garden'),side:THREE.DoubleSide,toneMapped:false}));
+ frontSign.position.set(0,10.04,hillZFront-.35*10+.11);frontSign.rotation.x=-tilt;scene.add(frontSign);
+ const backSign=new THREE.Mesh(signGeo,new THREE.MeshBasicMaterial({map:makeSign('RoseMmoon Meadow','Welcome to the garden'),side:THREE.DoubleSide,toneMapped:false}));
+ backSign.rotation.order='YXZ';backSign.rotation.set(-tilt,Math.PI,0);backSign.position.set(0,10.04,hillBack+.35*10-.11);scene.add(backSign);
+
+ // Ivy framing both portals, with a few hanging strands.
+ const ivyCol=[0x4f9a68,0x62ad73,0x3f8559],ivy=[],strands=[];
+ for(const face of [0,1]){
+  const planeZ=y=>face?hillBack+.35*y-.09:hillZFront-.35*y+.09;
+  for(let k=0;k<=22;k++){
+   const a=Math.PI*k/22,px=(bw+.1)*Math.cos(a),py=bwall+(bw+.1)*Math.sin(a);
+   if(Math.random()<.8)ivy.push({x:px+rr(-.1,.1),y:py+rr(-.1,.1),z:planeZ(py),sx:rr(.22,.42),sy:rr(.2,.34),sz:.12,ry:rr(0,3),c:pick(ivyCol)});
+   if(k%3===1)strands.push({x:px,y:py-.4,z:planeZ(py)+(face?-.04:.04),rz:Math.PI,c:pick(ivyCol)});
+  }
+  for(const s of [-1,1])for(let y=.6;y<bwall;y+=.9)if(Math.random()<.6)ivy.push({x:s*(bw+.12),y,z:planeZ(y),sx:rr(.2,.36),sy:rr(.2,.3),sz:.12,c:pick(ivyCol)});
  }
+ inst(new THREE.IcosahedronGeometry(1,0),M(0xffffff,.9),ivy);
+ inst(new THREE.ConeGeometry(.06,.9,4),M(0xffffff,.9),strands);
 
  // Physics: floor under the tunnel and plaza, plus solid hill either side of the bore so you stay on the road.
  makeStaticCollider(0,-.2,-95,100,.4,60);
@@ -246,6 +349,34 @@ block(2.4,.16,54,sidewalkMat,-3.7,.1,-30);block(2.4,.16,54,sidewalkMat,3.7,.1,-3
 // Road markings removed for a clean, uninterrupted road surface.
 function streetLamp(x,z){let pole=new THREE.Mesh(new THREE.CylinderGeometry(.07,.11,4.7,10),gold);pole.position.set(x,2.35,z);scene.add(pole);let side=x<0?1:-1;block(.9,.09,.12,gold,x+side*.35,4.55,z);let shade=new THREE.Mesh(new THREE.SphereGeometry(.3,14,10),M(0xffe6ad,.25,.1));shade.scale.set(1,.55,1);shade.position.set(x+side*.75,4.42,z);scene.add(shade);let light=new THREE.PointLight(0xffd6ec,1.5,8);light.position.copy(shade.position);scene.add(light)}
 for(let z=-54;z<0;z+=18){streetLamp(-4.9,z);streetLamp(4.9,z)}
+// ---- Boulevard, shop and gate detail: trees, planters, benches, flower beds, gate garland and lanterns ----
+{
+ const woodMat=M(0x8a5e3c,.75),planterMat=M(0xf7e8f0,.7),benchMat=M(0xd9a34e,.4,.5),lanternMat=new THREE.MeshStandardMaterial({color:0xffe1f1,emissive:0xff9fd0,emissiveIntensity:1.1,roughness:.3});
+ // Trees in the grass verge beside the sidewalks, kept clear of the shop fronts and the gate.
+ for(const sx of [-1,1]){
+  for(let z=-4;z>-21;z-=8)plantTree(sx*6.6,0,z+rr(-.6,.6),rr(.9,1.1),{sakura:sx>0&&Math.random()<.6});
+  for(let z=-35;z>-45;z-=8)plantTree(sx*6.6,0,z+rr(-.6,.6),rr(.9,1.05));
+ }
+ // Benches on the verge, facing the boulevard.
+ for(const sx of [-1,1])for(const z of [-12,-40]){
+  block(.5,.09,1.6,benchMat,sx*5.7,.5,z);
+  block(.09,.5,1.6,woodMat,sx*5.93,.8,z);
+  for(const dz of [-.65,.65])block(.45,.5,.08,woodMat,sx*5.7,.25,z+dz);
+ }
+ // Flower planters along the shop fronts.
+ for(const [sz,sxC] of [[-21.2,11],[-21.2,-11]]){
+  block(12,.5,.7,planterMat,sxC,.25,sz);
+  for(const dx of [-4.5,-2.25,0,2.25,4.5])flowerPatch(sxC+dx,sz,4,.45,.5);
+ }
+ // Flower beds at the foot of the gate pillars, plus a pink garland under the gate beam and lanterns on top.
+ for(const sx of [-1,1])flowerPatch(sx*6.4,-48.4,7,.7,.12);
+ const garlandMat=M(0xffffff,.8);
+ inst(new THREE.IcosahedronGeometry(.13,0),garlandMat,Array.from({length:19},(_,k)=>({x:-8.1+k*.9,y:8.75-Math.sin(k/18*Math.PI)*.22,z:-48.2,c:pick(flowerColors)})));
+ for(const gx of [-9,9]){ball(.3,lanternMat,gx,11.1,-49,1,1.2,1)}
+ // Small pink hedges either side of the gate approach.
+ for(const sx of [-1,1])for(let z=-52;z>-58;z-=1.6)plantShrub(sx*6.2,0,z,.85);
+ flushPlants();   // build every planted item (verge trees, flowers, grass, hill and tunnel plants) as instanced meshes
+}
 function detailedBuilding(x,z,w,h,d,color,style=0){
  const wall=M(color,.62),trim=M(style%2?0xe3b66d:0xffe1ef,.32,.35);
  block(w,h,d,wall,x,h/2,z);makeStaticCollider(x,h/2,z,w,h,d);block(w+.35,.28,d+.35,trim,x,h+.14,z);block(w+.5,.24,d+.45,trim,x,.12,z);
