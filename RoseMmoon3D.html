@@ -213,7 +213,47 @@ let women=[];for(let i=0;i<18;i++)women.push(npc(-6+(i%4)*4,-9-Math.floor(i/2)*7
 // Main character 3D stand-in for the first playable build
 const player=new THREE.Group();scene.add(player);const playerRig=new THREE.Group();player.add(playerRig);const skin=M(0xffd0bd),hair=M(0x422236),outfit=M(0xe92389),boots=M(0x99145e,.3,.2);
 function part(geo,ma,x,y,z,sx=1,sy=1,sz=1){let o=new THREE.Mesh(geo,ma);o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;playerRig.add(o);return o}
-part(new THREE.CapsuleGeometry(.27,.65,5,12),outfit,0,1.32,0);part(new THREE.SphereGeometry(.27,18,14),skin,0,2.08,0);part(new THREE.SphereGeometry(.34,18,14),hair,0,2.16,-.12,1.1,1.35,1);part(new THREE.SphereGeometry(.38,18,14),hair,0,1.65,-.18,1.15,1.5,.9);part(new THREE.SphereGeometry(.13,14,10),M(0xff238c),.29,2.3,.02);part(new THREE.ConeGeometry(.56,.6,12),outfit,0,.9,0);const limbs=[];for(let side of [-1,1]){let legPivot=new THREE.Group();legPivot.position.set(side*.16,.72,0);playerRig.add(legPivot);let leg=new THREE.Mesh(new THREE.CylinderGeometry(.09,.105,.68,12),skin);leg.position.y=-.36;leg.castShadow=true;legPivot.add(leg);let shoe=new THREE.Mesh(new THREE.CylinderGeometry(.13,.16,.25,12),boots);shoe.position.set(0,-.68,.07);shoe.castShadow=true;legPivot.add(shoe);let armPivot=new THREE.Group();armPivot.position.set(side*.36,1.62,0);playerRig.add(armPivot);let arm=new THREE.Mesh(new THREE.CylinderGeometry(.075,.09,.65,12),skin);arm.position.y=-.31;arm.castShadow=true;armPivot.add(arm);limbs.push({legPivot,armPivot,side})}player.position.set(0,0,3);
+part(new THREE.CapsuleGeometry(.27,.65,5,12),outfit,0,1.32,0);
+// Anime-inspired face: large expressive eyes, layered lashes, brows, nose, lips and blush
+const eyeWhite=M(0xfffaff,.25),iris=M(0x8b3f75,.22,.05),irisInner=M(0x392444,.2),ink=M(0x302035,.5),shine=new THREE.MeshBasicMaterial({color:0xffffff}),blush=new THREE.MeshBasicMaterial({color:0xf28fae,transparent:true,opacity:.48}),lip=M(0xb94c75,.55);
+part(new THREE.SphereGeometry(.27,32,24),skin,0,2.08,0,1,1.08,.88);
+// ears and soft cheek shading
+for(const side of [-1,1]){part(new THREE.SphereGeometry(.065,12,10),skin,side*.255,2.04,0,.75,1.1,.7);part(new THREE.SphereGeometry(.075,16,12),blush,side*.135,1.99,.218,1.15,.55,.16)}
+// Eye whites, colored irises, pupils and twin catchlights
+for(const side of [-1,1]){
+ const ex=side*.105,ey=2.115;
+ part(new THREE.SphereGeometry(.073,20,16),eyeWhite,ex,ey,.215,1.03,1.24,.42);
+ part(new THREE.SphereGeometry(.052,20,16),iris,ex+side*.008,ey-.008,.242,.88,1.15,.38);
+ part(new THREE.SphereGeometry(.031,16,12),irisInner,ex+side*.008,ey-.012,.257,.9,1.1,.35);
+ part(new THREE.SphereGeometry(.016,12,10),shine,ex-.014,ey+.019,.269,.8,1,.35);
+ part(new THREE.SphereGeometry(.008,10,8),shine,ex+.018,ey-.02,.27,.8,1,.35);
+ // upper eyeliner and eyebrows
+ const lashPts=[new THREE.Vector3(ex-side*.075,ey+.018,.238),new THREE.Vector3(ex,ey+.073,.247),new THREE.Vector3(ex+side*.075,ey+.025,.238)];
+ const lashCurve=new THREE.CatmullRomCurve3(lashPts);
+ const lash=new THREE.Mesh(new THREE.TubeGeometry(lashCurve,12,.009,5,false),ink);playerRig.add(lash);
+ const browPts=[new THREE.Vector3(ex-side*.055,2.205,.19),new THREE.Vector3(ex,2.225,.205),new THREE.Vector3(ex+side*.055,2.205,.19)];
+ playerRig.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(browPts),10,.012,5,false),hair));
+ // subtle lower lashes at outer eye corners
+ const outer=new THREE.Mesh(new THREE.ConeGeometry(.012,.055,6),ink);outer.position.set(ex+side*.075,ey-.035,.235);outer.rotation.z=-side*.5;playerRig.add(outer);
+}
+// Tiny nose, smiling mouth and delicate face details
+part(new THREE.SphereGeometry(.018,12,10),M(0xd58c87),0,2.035,.255,.8,1,.55);
+const smileCurve=new THREE.CatmullRomCurve3([new THREE.Vector3(-.045,1.965,.238),new THREE.Vector3(0,1.952,.25),new THREE.Vector3(.045,1.965,.238)]);
+playerRig.add(new THREE.Mesh(new THREE.TubeGeometry(smileCurve,12,.008,5,false),lip));
+part(new THREE.SphereGeometry(.012,10,8),M(0xffd9df),0,1.949,.247,1.8,.45,.35);
+// Long glossy hair silhouette, side locks and shaped fringe
+part(new THREE.SphereGeometry(.34,24,18),hair,0,2.16,-.12,1.1,1.35,1);
+part(new THREE.SphereGeometry(.38,24,18),hair,0,1.65,-.18,1.15,1.5,.9);
+for(const side of [-1,1]){
+ part(new THREE.SphereGeometry(.105,18,14),hair,side*.235,2.02,-.005,.8,1.65,1.1);
+ part(new THREE.CapsuleGeometry(.075,.42,5,10),hair,side*.235,1.78,-.035,.9,1,.9);
+}
+// Fringe pieces frame the forehead without hiding the eyes
+part(new THREE.SphereGeometry(.13,18,12),hair,-.105,2.245,.105,1.15,.58,.8);
+part(new THREE.SphereGeometry(.13,18,12),hair,.045,2.25,.11,1.1,.55,.8);
+part(new THREE.SphereGeometry(.095,16,12),hair,.16,2.205,.105,1,.7,.75);
+part(new THREE.SphereGeometry(.13,14,10),M(0xff238c),.29,2.3,.02);
+part(new THREE.ConeGeometry(.56,.6,12),outfit,0,.9,0);const limbs=[];for(let side of [-1,1]){let legPivot=new THREE.Group();legPivot.position.set(side*.16,.72,0);playerRig.add(legPivot);let leg=new THREE.Mesh(new THREE.CylinderGeometry(.09,.105,.68,12),skin);leg.position.y=-.36;leg.castShadow=true;legPivot.add(leg);let shoe=new THREE.Mesh(new THREE.CylinderGeometry(.13,.16,.25,12),boots);shoe.position.set(0,-.68,.07);shoe.castShadow=true;legPivot.add(shoe);let armPivot=new THREE.Group();armPivot.position.set(side*.36,1.62,0);playerRig.add(armPivot);let arm=new THREE.Mesh(new THREE.CylinderGeometry(.075,.09,.65,12),skin);arm.position.y=-.31;arm.castShadow=true;armPivot.add(arm);limbs.push({legPivot,armPivot,side})}player.position.set(0,0,3);
 // touch + keyboard movement
 const input={x:0,y:0,run:false,jump:false};let jumpVelocity=0;let cameraYaw=0,cameraPitch=.28,lookPointer=null,lastLookX=0,lastLookY=0;let cameraSensitivity=.008,invertCameraY=false;
 renderer.domElement.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'||e.pointerType==='mouse'){lookPointer=e.pointerId;lastLookX=e.clientX;lastLookY=e.clientY;renderer.domElement.setPointerCapture(e.pointerId)}});
