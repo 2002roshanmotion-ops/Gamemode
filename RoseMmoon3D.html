@@ -91,13 +91,13 @@ if(CANNON){
  physicsMaterials.ground=new CANNON.Material('city-ground');
  physicsMaterials.player=new CANNON.Material('player');
  physicsWorld.addContactMaterial(new CANNON.ContactMaterial(physicsMaterials.player,physicsMaterials.ground,{friction:.015,restitution:0}));
- makeStaticCollider(0,-.2, -29,100,.4,130);
+ makeStaticCollider(0,-.2,-27,44,.4,54);
  // Invisible city limits keep the character inside the playable district.
- makeStaticCollider(-44,5,-29,.5,10,110);makeStaticCollider(44,5,-29,.5,10,110);
- makeStaticCollider(0,5,-82,36,10,.5);makeStaticCollider(0,5,24,36,10,.5);
+ makeStaticCollider(-22,5,-27,.5,10,54);makeStaticCollider(22,5,-27,.5,10,54);
+ makeStaticCollider(0,5,-54,44,10,.5);makeStaticCollider(0,5,0,44,10,.5);
 }
 const gold=M(0xd9a34e,.3,.65),glass=new THREE.MeshStandardMaterial({color:0xffd9ee,roughness:.18,transparent:true,opacity:.58}),pave=M(0xd987b2),pink=M(0xf2a8ce);
-block(92,.3,112,pave,0,-.2,-29);
+block(44,.3,54,pave,0,-.2,-27);
 // Remove the pale carpet slab and decorative pavement tiles; leave the pink ground and walkways.
 
 // Decorative background props removed.
@@ -105,9 +105,8 @@ block(92,.3,112,pave,0,-.2,-29);
 block(12.5,11,8.5,M(0xf0a9cc),11,5.5,-27);makeStaticCollider(11,5.5,-31.25,12.5,11,.5);makeStaticCollider(4.75,5.5,-27,.5,11,8);makeStaticCollider(17.25,5.5,-27,.5,11,8);block(13,.4,9,gold,11,11,-27);block(7.5,2,.25,M(0x96346e),11,8.4,-22.75);
 for(let x of [5,17])block(.4,10.6,.35,gold,x,5.4,-22.75);
 for(let x of [7.5,11,14.5]){block(2.8,5.2,.2,glass,x,3.4,-22.75);block(.1,5.2,.25,gold,x-1.45,3.4,-22.65);block(.1,5.2,.25,gold,x+1.45,3.4,-22.65)}
-let pendingLogoAssets=2;let cityFinishQueued=false;function logoAssetFinished(){pendingLogoAssets=Math.max(0,pendingLogoAssets-1);if(window.__roseLoadProgress)window.__roseLoadProgress(88,'Loading the two store logos…');if(window.__roseCityReady&&pendingLogoAssets===0)finishCityLoading()}const logoLoader=new THREE.TextureLoader();logoLoader.setCrossOrigin('anonymous');function imageLogo(path,maxW,maxH,x,y,z){logoLoader.load(path,texture=>{logoAssetFinished();texture.colorSpace=THREE.SRGBColorSpace;const aspect=texture.image.width/texture.image.height;const w=Math.min(maxW,maxH*aspect),h=w/aspect;const material=new THREE.MeshBasicMaterial({map:texture,color:0xffffff,transparent:true,side:THREE.DoubleSide,toneMapped:false});const logo=new THREE.Mesh(new THREE.PlaneGeometry(w,h),material);logo.position.set(x,y,z);scene.add(logo);},undefined,error=>{console.warn('Logo image could not load:',path,error);logoAssetFinished()});}imageLogo('https://d2ol7oe51mr4n9.cloudfront.net/user_3JYbYCHyy3naSeG6RhPtSZPxh49/e5ee25d3-5140-4aec-96d9-c570362e35c7.png',5.2,5.2,11,7.1,-22.6);signText('FASHION','LET YOUR BEAUTY SPEAK',11,12.5,-22.62,8.8,1.65);let lamp=new THREE.PointLight(0xffb4d9,12,20);lamp.position.set(11,4,-20);scene.add(lamp);
-// neighboring pastel buildings
-for(let i=0;i<4;i++){let z=-12-i*17;if(i===1)continue;block(9,9,9,M([0xe3a6c8,0xd7b3e4,0xf0bfd8,0xc9b8e8][i]),-20,4.5,z);makeStaticCollider(-20,4.5,z,9,9,9);block(9.3,.35,9.3,gold,-20,9.1,z);for(let y=2;y<8;y+=2.5)for(let x=-22;x<=-18;x+=2)block(.9,1.4,.08,glass,x,y,z+4.55)}
+let pendingLogoAssets=2;let cityFinishQueued=false;function logoAssetFinished(){pendingLogoAssets=Math.max(0,pendingLogoAssets-1);if(window.__roseLoadProgress)window.__roseLoadProgress(88,'Loading the two store logos…');if(window.__roseCityReady&&pendingLogoAssets===0)finishCityLoading()}const logoLoader=new THREE.TextureLoader();logoLoader.setCrossOrigin('anonymous');function imageLogo(path,maxW,maxH,x,y,z){logoLoader.load(path,texture=>{logoAssetFinished();texture.colorSpace=THREE.SRGBColorSpace;const aspect=texture.image.width/texture.image.height;const w=Math.min(maxW,maxH*aspect),h=w/aspect;const material=new THREE.MeshBasicMaterial({map:texture,color:0xffffff,transparent:true,side:THREE.DoubleSide,toneMapped:false});const logo=new THREE.Mesh(new THREE.PlaneGeometry(w,h),material);logo.position.set(x,y,z);scene.add(logo);},undefined,error=>{console.warn('Logo image could not load:',path,error);if(path.includes('398594e4'))signText('HANDMADE','ROSEMOON',-11,6.35,-22.48,6.2,1.25);logoAssetFinished()});}imageLogo('https://d2ol7oe51mr4n9.cloudfront.net/user_3JYbYCHyy3naSeG6RhPtSZPxh49/e5ee25d3-5140-4aec-96d9-c570362e35c7.png',5.2,5.2,11,7.1,-22.6);signText('FASHION','LET YOUR BEAUTY SPEAK',11,12.5,-22.62,8.8,1.65);let lamp=new THREE.PointLight(0xffb4d9,12,20);lamp.position.set(11,4,-20);scene.add(lamp);
+// All surrounding houses and extra buildings removed; only the two boutiques remain.
 
 // Rosemoon Handmade boutique, across the boulevard from Fashion
 block(12.5,10,8.5,M(0xe9a6c9),-11,5,-27);makeStaticCollider(-11,5,-31.25,12.5,10,.5);makeStaticCollider(-17.25,5,-27,.5,10,8);makeStaticCollider(-4.75,5,-27,.5,10,8);block(13,.4,9,gold,-11,10,-27);
@@ -117,17 +116,17 @@ imageLogo('https://d2ol7oe51mr4n9.cloudfront.net/user_3JYbYCHyy3naSeG6RhPtSZPxh4
 function signText(title,subtitle,x,y,z,w,h){const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=320;const ctx=canvas.getContext('2d');ctx.textAlign='center';ctx.shadowColor='rgba(117,22,69,.3)';ctx.shadowBlur=12;ctx.fillStyle='#a51f61';ctx.font='bold 132px Georgia';ctx.fillText(title,512,145);ctx.shadowBlur=0;ctx.fillStyle='#b98232';ctx.font='bold 48px Georgia';ctx.fillText(subtitle,512,235);const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;const material=new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide,toneMapped:false});const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,h),material);mesh.position.set(x,y,z);scene.add(mesh);}
  // Grand RoseMmoon City entrance gate — open central span keeps the boulevard clear.
  const gateGold=M(0xd9a34e,.28,.72),gatePink=M(0xe9a1c7,.48,.18),gateStone=M(0xf7e8f0,.72);
- for(const gx of [-10.5,10.5]){
-  block(2.2,9,2.2,gateStone,gx,4.5,-78);
-  block(2.5,.38,2.5,gateGold,gx,8.95,-78);
-  block(1.65,.42,1.65,gatePink,gx,9.35,-78);
-  block(.32,1.2,.32,gateGold,gx,10.15,-78);
-  makeStaticCollider(gx,4.5,-78,2.2,9,2.2);
-  for(let gy=2;gy<8;gy+=2)block(2.24,.12,2.24,gateGold,gx,gy,-78);
+ for(const gx of [-9,9]){
+  block(2.2,9,2.2,gateStone,gx,4.5,-49);
+  block(2.5,.38,2.5,gateGold,gx,8.95,-49);
+  block(1.65,.42,1.65,gatePink,gx,9.35,-49);
+  block(.32,1.2,.32,gateGold,gx,10.15,-49);
+  makeStaticCollider(gx,4.5,-49,2.2,9,2.2);
+  for(let gy=2;gy<8;gy+=2)block(2.24,.12,2.24,gateGold,gx,gy,-49);
  }
- block(22,.85,1.5,gateStone,0,9.35,-78);
- block(22.5,.22,1.8,gateGold,0,9.88,-78);
- block(18,.18,1.35,gatePink,0,8.82,-78);
+ block(19,.85,1.5,gateStone,0,9.35,-49);
+ block(19.5,.22,1.8,gateGold,0,9.88,-49);
+ block(16,.18,1.35,gatePink,0,8.82,-49);
  // Large centered RoseMmoon wordmark above the road opening.
  const gateCanvas=document.createElement('canvas');gateCanvas.width=1600;gateCanvas.height=360;
  const gateCtx=gateCanvas.getContext('2d');gateCtx.clearRect(0,0,1600,360);
@@ -138,19 +137,19 @@ function signText(title,subtitle,x,y,z,w,h){const canvas=document.createElement(
  gateCtx.shadowBlur=0;gateCtx.fillStyle='#bd8a3b';gateCtx.font='bold 64px Georgia';
  gateCtx.fillText('LUXURY CITY',800,285);
  const gateTexture=new THREE.CanvasTexture(gateCanvas);gateTexture.colorSpace=THREE.SRGBColorSpace;
- const gateLogo=new THREE.Mesh(new THREE.PlaneGeometry(12.5,2.82),new THREE.MeshBasicMaterial({map:gateTexture,transparent:true,side:THREE.DoubleSide,toneMapped:false}));
- gateLogo.position.set(0,9.35,-77.12);scene.add(gateLogo);
- let hlamp=new THREE.PointLight(0xffb4d9,10,18);hlamp.position.set(-8,4,-70);scene.add(hlamp);
+ const gateLogo=new THREE.Mesh(new THREE.PlaneGeometry(11,2.5),new THREE.MeshBasicMaterial({map:gateTexture,transparent:true,side:THREE.DoubleSide,toneMapped:false}));
+ gateLogo.position.set(0,9.35,-48.12);scene.add(gateLogo);
+ let hlamp=new THREE.PointLight(0xffb4d9,10,18);hlamp.position.set(-8,4,-44);scene.add(hlamp);
 
 // Removed fountain, garden trees, planters and garden props.
 // Expanded luxury shopping district: detailed streets, lighting and architecture
 const sidewalkMat=M(0xd98bb8),roadMat=M(0x8f8291,.92),roadLine=M(0xfff5fa,.8),windowGlow=new THREE.MeshStandardMaterial({color:0xffe4f2,emissive:0xff9bcf,emissiveIntensity:.22,roughness:.25});
-block(5,.12,88,roadMat,0,.02,-30);
-block(2.4,.16,88,sidewalkMat,-3.7,.1,-30);block(2.4,.16,88,sidewalkMat,3.7,.1,-30);
+block(5,.12,40,roadMat,0,.02,-27);
+block(2.4,.16,40,sidewalkMat,-3.7,.1,-27);block(2.4,.16,40,sidewalkMat,3.7,.1,-27);
 // Keep a single straight central boulevard; remove both cross streets and their sidewalks.
 // Road markings removed for a clean, uninterrupted road surface.
 function streetLamp(x,z){let pole=new THREE.Mesh(new THREE.CylinderGeometry(.07,.11,4.7,10),gold);pole.position.set(x,2.35,z);scene.add(pole);let side=x<0?1:-1;block(.9,.09,.12,gold,x+side*.35,4.55,z);let shade=new THREE.Mesh(new THREE.SphereGeometry(.3,14,10),M(0xffe6ad,.25,.1));shade.scale.set(1,.55,1);shade.position.set(x+side*.75,4.42,z);scene.add(shade);let light=new THREE.PointLight(0xffd6ec,1.5,8);light.position.copy(shade.position);scene.add(light)}
-for(let z=-68;z<5;z+=12){streetLamp(-4.9,z);streetLamp(4.9,z)}
+for(let z=-42;z<0;z+=18){streetLamp(-4.9,z);streetLamp(4.9,z)}
 function detailedBuilding(x,z,w,h,d,color,style=0){
  const wall=M(color,.62),trim=M(style%2?0xe3b66d:0xffe1ef,.32,.35);
  block(w,h,d,wall,x,h/2,z);makeStaticCollider(x,h/2,z,w,h,d);block(w+.35,.28,d+.35,trim,x,h+.14,z);block(w+.5,.24,d+.45,trim,x,.12,z);
@@ -166,23 +165,17 @@ function detailedBuilding(x,z,w,h,d,color,style=0){
  else if(style%3===1){for(let xx of [-w*.3,0,w*.3])block(.18,.9,d*.75,trim,x+xx,h+.75,z)}
  else{let roof=new THREE.Mesh(new THREE.ConeGeometry(w*.55,1.8,4),trim);roof.position.set(x,h+1.2,z);roof.rotation.y=Math.PI/4;scene.add(roof)}
 }
-const districtColors=[0xe6a9c9,0xd5b8e8,0xf1c3d8,0xc9c5eb,0xe8c0ad,0xbfcfe5];
-for(let i=0;i<6;i++){let side=i%2===0?-1:1,row=Math.floor(i/2),x=side*23.5,z=-9-row*23;detailedBuilding(x,z,8+row%2,8+row*1.3,8,districtColors[i],i)}
-for(let i=0;i<4;i++){let side=i%2===0?-1:1,x=side*31,z=-18-Math.floor(i/2)*34;detailedBuilding(x,z,7,13,7,districtColors[(i+2)%districtColors.length],i+1)}
-// Removed flower beds from the roadside.
-for(let i=0;i<9;i++){let x=-42+i*10,z=-91-(i%3)*5,h=14+(i%4)*5,w=6+(i%3)*2;detailedBuilding(x,z,w,h,7,districtColors[i%districtColors.length],i)}
+// All houses and surrounding buildings removed.
 const clouds=[];
 
 // Removed mountains, forests, river, lake, bridge, hills, birds and butterflies.
 const natureTrees=[],birds=[],butterflies=[],cars=[];
 // Road-bound traffic: one continuous rounded loop entirely inside the main boulevard.
 const trafficRoute=new THREE.CatmullRomCurve3([
- new THREE.Vector3(-1.15,.04,-70),new THREE.Vector3(-1.15,.04,7),
- new THREE.Vector3(-.9,.04,9.5),new THREE.Vector3(0,.04,11),
- new THREE.Vector3(.9,.04,9.5),new THREE.Vector3(1.15,.04,7),
- new THREE.Vector3(1.15,.04,-70),new THREE.Vector3(.9,.04,-72.5),
- new THREE.Vector3(0,.04,-71.8),new THREE.Vector3(-.9,.04,-70.5)
-],true,"catmullrom",.22);
+  new THREE.Vector3(-1.15,.04,-45),new THREE.Vector3(-1.15,.04,-7),
+  new THREE.Vector3(-.9,.04,-5),new THREE.Vector3(0,.04,-3),new THREE.Vector3(.9,.04,-5),new THREE.Vector3(1.15,.04,-7),
+  new THREE.Vector3(1.15,.04,-45),new THREE.Vector3(.9,.04,-47.5),new THREE.Vector3(0,.04,-46.8),new THREE.Vector3(-.9,.04,-45.5)
+ ],true,"catmullrom",.22);
 const trafficLength=trafficRoute.getLength(),trafficStops=[.25,.5,.75];
 function makeCar(u,color){
  const g=new THREE.Group(),body=new THREE.Mesh(new THREE.BoxGeometry(1.45,.62,2.55),M(color,.38,.12));body.position.y=.68;g.add(body);
@@ -252,7 +245,7 @@ let limbs=[];for(let side of [-1,1]){
  for(let f=0;f<4;f++){let finger=new THREE.Mesh(new THREE.CapsuleGeometry(.012,.045,3,6),skin);finger.position.set((f-1.5)*.025,-.735,.025);finger.rotation.z=(f-1.5)*-.12;armPivot.add(finger)}
  limbs.push({legPivot,armPivot,side})
 }scene.add(g);return {g,body,limbs,faceEyes,blinkState:{nextBlink:performance.now()+Math.random()*2500,blinkStart:0},phase:Math.random()*Math.PI*2,originX:x,originZ:z,direction:Math.random()<.5?-1:1,speed:.28+Math.random()*.12,range:5}}
-let women=[];for(let i=0;i<6;i++)women.push(npc(i%2===0?-3.7:3.7,-14-Math.floor(i/2)*25));
+let women=[];for(let i=0;i<2;i++)women.push(npc(i%2===0?-3.7:3.7,-17));
 // Main character 3D stand-in for the first playable build
 const player=new THREE.Group();scene.add(player);const playerRig=new THREE.Group();player.add(playerRig);const skin=M(0xffd0bd),hair=M(0x422236),outfit=M(0xe92389),boots=M(0x99145e,.3,.2),iris=M(0x8b3f75,.22,.05);
 function part(geo,ma,x,y,z,sx=1,sy=1,sz=1){let o=new THREE.Mesh(geo,ma);o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;playerRig.add(o);return o}
