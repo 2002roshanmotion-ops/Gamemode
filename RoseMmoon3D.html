@@ -346,10 +346,11 @@ const touchGap=touches=>Math.hypot(touches[0].clientX-touches[1].clientX,touches
 document.addEventListener('touchstart',e=>{
  if(e.target.closest&&e.target.closest('#run,#jump,#enter,#settings,#settingsBtn,#shop,#welcome'))return;
  if(pid!==null){
-  // While moving, allow a second finger on the right to orbit the camera, but never pinch-zoom.
-  const look=Array.from(e.touches).find(t=>t.clientX>window.innerWidth*.42);
-  if(look){touchLookId=look.identifier;touchLookX=look.clientX;touchLookY=look.clientY}
-  pinchDistance=0;return;
+  // Right-side drag orbits; two right-side fingers pinch-zoom while joystick moves.
+  const rightTouches=Array.from(e.touches).filter(t=>t.clientX>window.innerWidth*.42);
+  if(rightTouches.length>=2){touchLookId=null;pinchDistance=touchGap(rightTouches.slice(0,2))}
+  else if(rightTouches.length===1){const look=rightTouches[0];touchLookId=look.identifier;touchLookX=look.clientX;touchLookY=look.clientY;pinchDistance=0}
+  return;
  }
  if(e.target.closest&&e.target.closest('#pad'))return;
  if(e.touches.length===2){touchLookId=null;lookPointer=null;pinchDistance=touchGap(e.touches)}
@@ -357,14 +358,15 @@ document.addEventListener('touchstart',e=>{
 },{passive:false,capture:true});
 document.addEventListener('touchmove',e=>{
  if(pid!==null){
-  // Orbit with the right-side finger while the left joystick is held; zoom stays locked.
-  if(touchLookId!==null){const t=Array.from(e.touches).find(v=>v.identifier===touchLookId);if(t){e.preventDefault();cameraYaw-=(t.clientX-touchLookX)*cameraSensitivity;cameraPitch+=(t.clientY-touchLookY)*cameraSensitivity*(invertCameraY?-1:1);cameraPitch=THREE.MathUtils.clamp(cameraPitch,-.08,1.25);touchLookX=t.clientX;touchLookY=t.clientY}}
-  pinchDistance=0;return;
+  const rightTouches=Array.from(e.touches).filter(t=>t.clientX>window.innerWidth*.42);
+  if(rightTouches.length>=2){e.preventDefault();touchLookId=null;const next=touchGap(rightTouches.slice(0,2));if(pinchDistance>0)changeZoom((pinchDistance-next)*.035);pinchDistance=next}
+  else{pinchDistance=0;if(rightTouches.length===1){const t=rightTouches[0];if(t.identifier===touchLookId){e.preventDefault();cameraYaw-=(t.clientX-touchLookX)*cameraSensitivity;cameraPitch+=(t.clientY-touchLookY)*cameraSensitivity*(invertCameraY?-1:1);cameraPitch=THREE.MathUtils.clamp(cameraPitch,-.08,1.25)}touchLookId=t.identifier;touchLookX=t.clientX;touchLookY=t.clientY}}
+  return;
  }
  if(e.touches.length===2){e.preventDefault();touchLookId=null;const next=touchGap(e.touches);if(pinchDistance>0)changeZoom((pinchDistance-next)*.035);pinchDistance=next;lookPointer=null}
  else if(e.touches.length===1&&touchLookId!==null){const t=Array.from(e.touches).find(v=>v.identifier===touchLookId);if(t){e.preventDefault();cameraYaw-=(t.clientX-touchLookX)*cameraSensitivity;cameraPitch+=(t.clientY-touchLookY)*cameraSensitivity*(invertCameraY?-1:1);cameraPitch=THREE.MathUtils.clamp(cameraPitch,-.08,1.25);touchLookX=t.clientX;touchLookY=t.clientY}}
 },{passive:false,capture:true});
-document.addEventListener('touchend',e=>{if(e.touches.length<2)pinchDistance=0;if(e.touches.length===0)touchLookId=null},{passive:true,capture:true});
+document.addEventListener('touchend',e=>{pinchDistance=0;const rightTouches=Array.from(e.touches).filter(t=>t.clientX>window.innerWidth*.42);if(pid!==null&&rightTouches.length===1){const t=rightTouches[0];touchLookId=t.identifier;touchLookX=t.clientX;touchLookY=t.clientY}else if(e.touches.length===0)touchLookId=null},{passive:true,capture:true});
 document.addEventListener('touchcancel',()=>{pinchDistance=0;touchLookId=null},{passive:true,capture:true});
 renderer.domElement.addEventListener("wheel",e=>{e.preventDefault();changeZoom(e.deltaY>0?1.1:-1.1)},{passive:false});
 renderer.domElement.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse'){lookPointer=e.pointerId;lastLookX=e.clientX;lastLookY=e.clientY;renderer.domElement.setPointerCapture(e.pointerId)}});
