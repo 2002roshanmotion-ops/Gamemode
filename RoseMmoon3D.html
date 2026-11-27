@@ -175,7 +175,7 @@ makeShopShell(-11,5,-27,12.5,10,8.5,3.05,0xe9a6c9);
 makeShopInterior(-11,-27,12.1,8.1,0xfff0f5);
 makeShopForecourt(-11,-18.3,13.5,9.0);
 const handmadeDoors=makeShopDoors(-11,2.25,-22.58);
-imageLogo('https://d2ol7oe51mr4n9.cloudfront.net/user_3JYbYCHyy3naSeG6RhPtSZPxh49/398594e4-ceb9-452c321-e3b38383fed5.png',6.2,5.8,-11,6.5,-22.6);
+imageLogo('https://d2ol7oe51mr4n9.cloudfront.net/user_3JYbYCHyy3naSeG6RhPtSZPxh49/a972cc2f-ee77-4e6e-926b-1f51a3e218c0.png',6.2,6.2,-11,6.5,-22.6);
 function signText(title,subtitle,x,y,z,w,h){const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=320;const ctx=canvas.getContext('2d');ctx.textAlign='center';ctx.shadowColor='rgba(117,22,69,.3)';ctx.shadowBlur=12;ctx.fillStyle='#a51f61';ctx.font='bold 132px Georgia';ctx.fillText(title,512,145);ctx.shadowBlur=0;ctx.fillStyle='#b98232';ctx.font='bold 48px Georgia';ctx.fillText(subtitle,512,235);const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;const material=new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide,toneMapped:false});const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,h),material);mesh.position.set(x,y,z);scene.add(mesh);}
  // Grand RoseMmoon City entrance gate — open central span keeps the boulevard clear.
  const gateGold=M(0xd9a34e,.28,.72),gatePink=M(0xe9a1c7,.48,.18),gateStone=M(0xf7e8f0,.72);
