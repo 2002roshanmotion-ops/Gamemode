@@ -283,7 +283,7 @@ let limbs=[];for(let side of [-1,1]){
 }scene.add(g);return {g,body,limbs,faceEyes,blinkState:{nextBlink:performance.now()+Math.random()*2500,blinkStart:0},phase:Math.random()*Math.PI*2,originX:x,direction:Math.random()<.5?-1:1,speed:.35+Math.random()*.25,range:2+Math.random()*2}}
 let women=[];for(let i=0;i<18;i++)women.push(npc(-6+(i%4)*4,-9-Math.floor(i/2)*7));
 // Main character 3D stand-in for the first playable build
-const player=new THREE.Group();scene.add(player);const playerRig=new THREE.Group();player.add(playerRig);const skin=M(0xffd0bd),hair=M(0x422236),outfit=M(0xe92389),boots=M(0x99145e,.3,.2);
+const player=new THREE.Group();scene.add(player);const playerRig=new THREE.Group();player.add(playerRig);const skin=M(0xffd0bd),hair=M(0x422236),outfit=M(0xe92389),boots=M(0x99145e,.3,.2),iris=M(0x8b3f75,.22,.05);
 function part(geo,ma,x,y,z,sx=1,sy=1,sz=1){let o=new THREE.Mesh(geo,ma);o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=true;playerRig.add(o);return o}
 // Detailed full-body player model with layered outfit, articulated limbs, hands and shoes.
 const bodyBase=part(new THREE.CapsuleGeometry(.255,.53,7,16),outfit,0,1.32,0,1,1.05,.9);
