@@ -145,9 +145,17 @@ const sidewalkMat=M(0xd98bb8),roadMat=M(0x8f8291,.92),roadLine=M(0xfff5fa,.8),wi
 // Hill tunnel beyond the gate: a natural rock opening through the surrounding hills.
 {
  const rock=M(0x817d8b,.95),rockLight=M(0x9b96a3,.9),inside=M(0x45424f,.98),edge=M(0x706b79,.95),pinkGlow=M(0xffc8e8,.28,.12);
- // Road and pink pedestrian paths continue directly through the hill tunnel.
- block(5,.12,80,roadMat,0,.02,-43);
- block(2.4,.16,80,sidewalkMat,-3.7,.1,-43);block(2.4,.16,80,sidewalkMat,3.7,.1,-43);
+ // A continuous road and pedestrian paths pass through the full tunnel length.
+ block(5,.12,58,roadMat,0,.02,-84);
+ block(2.4,.16,58,sidewalkMat,-3.7,.1,-84);block(2.4,.16,58,sidewalkMat,3.7,.1,-84);
+ // Clearly visible natural-rock entrance portal, framing the open drive-through.
+ const portal=new THREE.Mesh(new THREE.TorusGeometry(7.1,1.45,10,28),rockLight);
+ portal.position.set(0,6.9,-69.2);portal.castShadow=true;portal.receiveShadow=true;scene.add(portal);
+ ball(5.4,rock,-9.2,3.5,-69.2,1.1,1.2,1.25);
+ ball(5.4,rock,9.2,3.5,-69.2,1.1,1.2,1.25);
+ ball(7.5,rockLight,0,13.1,-69.2,1.05,.55,1.2);
+ // Entrance interior is dark enough to read as a hollow passage, not a rock wall.
+ block(10,.3,58,inside,0,11.65,-84);
  // Large irregular hillside shoulders leave a clear road-width opening in the middle.
  for(let i=0;i<8;i++){
   const z=-76-i*7.5,scale=.85+Math.random()*.5;
