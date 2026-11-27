@@ -100,11 +100,55 @@ block(130,.3,130,pave,0,-.2,-30);
 // Remove the pale carpet slab and decorative pavement tiles; leave the pink ground and walkways.
 
 // Decorative background props removed.
-// main RoseMmoon Fashion boutique
-block(12.5,11,8.5,M(0xf0a9cc),11,5.5,-27);makeStaticCollider(11,5.5,-31.25,12.5,11,.5);makeStaticCollider(4.75,5.5,-27,.5,11,8);makeStaticCollider(17.25,5.5,-27,.5,11,8);block(13,.4,9,gold,11,11,-27);block(7.5,2,.25,M(0x96346e),11,8.4,-22.75);
-for(let x of [5,17])block(.4,10.6,.35,gold,x,5.4,-22.75);
-for(let x of [7.5,14.5]){block(2.8,5.2,.2,glass,x,3.4,-22.75);block(.1,5.2,.25,gold,x-1.45,3.4,-22.65);block(.1,5.2,.25,gold,x+1.45,3.4,-22.65)}
-const fashionDoors=makeShopDoors(11,3.4,-22.58);
+// main RoseMmoon Fashion boutique — hollow interior, glazed front, and welcoming forecourt
+makeShopShell(11,5.5,-27,12.5,11,8.5,3.05,0xf0a9cc);
+makeShopInterior(11,-27,12.1,8.1,0xffe2f1);
+makeShopForecourt(11,-18.1,13.5,8.2);
+const fashionDoors=makeShopDoors(11,2.35,-22.58);
+function makeShopShell(cx,cy,cz,w,h,d,wallColor){
+ const wall=M(wallColor,.72),floor=M(0xffe4f1,.55),roof=M(0xd9a34e,.32,.45),glassPanel=new THREE.MeshStandardMaterial({color:0xffd9ee,roughness:.18,transparent:true,opacity:.5});
+ const front=cz+d/2,back=cz-d/2,sideX=cx+w/2;
+ // Hollow building: solid side/back walls, with a real opening at the front.
+ block(.28,h,d,wall,cx-w/2+.14,cy,cz);block(.28,h,d,wall,cx+w/2-.14,cy,cz);
+ block(w,h,.28,wall,cx,cy,back+.14);
+ // Front wall segments leave a clear 3.05m doorway.
+ const segW=(w-3.05)/2;
+ block(segW,h,.28,wall,cx-w/2+segW/2,cy,front-.14);block(segW,h,.28,wall,cx+w/2-segW/2,cy,front-.14);
+ // Glazed display windows with opaque lintels/sills and narrow gold mullions.
+ for(const side of [-1,1]){
+  const wx=cx+side*3.55,wy=cy-.65;
+  block(2.75,1.55,.16,wall,wx,cy+h/2-.78,front+.015);
+  block(2.75,1.15,.16,wall,wx,cy-h/2+.58,front+.015);
+  block(.82,5.2,.16,wall,wx-side*1.8,wy,front+.015);
+  const pane=new THREE.Mesh(new THREE.BoxGeometry(2.65,5.0,.045),glassPanel);pane.position.set(wx,wy,front+.105);scene.add(pane);
+  block(.07,5.05,.11,gold,wx-1.35,wy,front+.14);block(.07,5.05,.11,gold,wx+1.35,wy,front+.14);
+ }
+ // Interior floor, trim, and a ceiling/roof slab; shop remains open through its doorway.
+ block(w-.45,.16,d-.45,floor,cx,.02,cz);
+ block(w+.3,.38,d+.3,roof,cx,cy+h/2+.19,cz);
+ // Gold framing at the entrance.
+ for(const x of [cx-1.62,cx+1.62])block(.13,h-.25,.3,gold,x,cy,front+.04);
+}
+function makeShopInterior(cx,cz,w,d,floorColor){
+ const floorMat=M(floorColor,.52),shelfMat=M(0xf6bfdc,.48),trim=M(0xd9a34e,.32,.5);
+ // Interior displays are kept low so the doorway and floor remain easy to see.
+ block(w,.08,d,floorMat,cx,.12,cz);
+ for(const side of [-1,1]){
+  const rack=block(.22,2.35,4.2,shelfMat,cx+side*(w/2-1.0),1.3,cz);
+  block(.28,.12,4.35,trim,cx+side*(w/2-1.0),2.5,cz);
+  for(let k=0;k<3;k++)block(.24,.08,3.9,trim,cx+side*(w/2-1.0),.65+k*.72,cz);
+ }
+ // A central welcome/display island, positioned deeper inside, away from the entrance.
+ block(3.3,.85,1.2,shelfMat,cx,0.62,cz-1.5);
+ block(3.35,.08,1.25,trim,cx,1.08,cz-1.5);
+}
+function makeShopForecourt(cx,frontZ,w,d){
+ const tile=M(0xf3c3df,.55),edge=M(0xd9a34e,.3,.5);
+ block(w,.12,d,tile,cx,.02,frontZ+d/2);
+ // Neat gold edge strips along the sides and far edge, no raised curb.
+ block(.12,.05,d,edge,cx-w/2,.105,frontZ+d/2);block(.12,.05,d,edge,cx+w/2,.105,frontZ+d/2);block(w,.05,.12,edge,cx,.105,frontZ+d);
+ for(let k=1;k<4;k++)block(.025,.015,d-.25,M(0xffeaf5,.7),cx-w/2+k*w/4,.09,frontZ+d/2);
+}
 function animateShopDoors(pair,isNear){const open=isNear?1.18:0;pair.userData.hinges.forEach(h=>{const target=-h.userData.side*open;h.rotation.y+=(target-h.rotation.y)*.12});}
 function makeShopDoors(centerX,centerY,frontZ){
  const pair=new THREE.Group();scene.add(pair);
@@ -123,11 +167,11 @@ function makeShopDoors(centerX,centerY,frontZ){
 let pendingLogoAssets=2;let cityFinishQueued=false;function logoAssetFinished(){pendingLogoAssets=Math.max(0,pendingLogoAssets-1);if(window.__roseCityReady&&pendingLogoAssets===0)finishCityLoading()}const logoLoader=new THREE.TextureLoader();logoLoader.setCrossOrigin('anonymous');function imageLogo(path,maxW,maxH,x,y,z){logoLoader.load(path,texture=>{logoAssetFinished();texture.colorSpace=THREE.SRGBColorSpace;const aspect=texture.image.width/texture.image.height;const w=Math.min(maxW,maxH*aspect),h=w/aspect;const material=new THREE.MeshBasicMaterial({map:texture,color:0xffffff,transparent:true,side:THREE.DoubleSide,toneMapped:false});const logo=new THREE.Mesh(new THREE.PlaneGeometry(w,h),material);logo.position.set(x,y,z);scene.add(logo);},undefined,error=>{console.warn('Logo image could not load:',path,error);if(path.includes('398594e4'))signText('HANDMADE','ROSEMOON',-11,6.35,-22.48,6.2,1.25);logoAssetFinished()});}signText('FASHION','LET YOUR BEAUTY SPEAK',11,10.35,-22.62,8.8,1.65);imageLogo('https://d2ol7oe51mr4n9.cloudfront.net/user_3JYbYCHyy3naSeG6RhPtSZPxh49/e5ee25d3-5140-4aec-96d9-c570362e35c7.png',5.2,5.2,11,6.5,-22.6);let lamp=new THREE.PointLight(0xffb4d9,12,20);lamp.position.set(11,4,-20);scene.add(lamp);
 // All surrounding houses and extra buildings removed; only the two boutiques remain.
 
-// Rosemoon Handmade boutique, across the boulevard from Fashion
-block(12.5,10,8.5,M(0xe9a6c9),-11,5,-27);makeStaticCollider(-11,5,-31.25,12.5,10,.5);makeStaticCollider(-17.25,5,-27,.5,10,8);makeStaticCollider(-4.75,5,-27,.5,10,8);block(13,.4,9,gold,-11,10,-27);
-for(let x of [-17,-5])block(.4,9.6,.35,gold,x,4.9,-22.75);
-for(let x of [-14.5,-7.5]){block(2.8,5.2,.2,glass,x,3.3,-22.75);block(.1,5.2,.22,gold,x-1.45,3.3,-22.65);block(.1,5.2,.22,gold,x+1.45,3.3,-22.65)}
-const handmadeDoors=makeShopDoors(-11,3.3,-22.58);
+// Rosemoon Handmade boutique, across the boulevard from Fashion — hollow interior and forecourt
+makeShopShell(-11,5,-27,12.5,10,8.5,3.05,0xe9a6c9);
+makeShopInterior(-11,-27,12.1,8.1,0xfff0f5);
+makeShopForecourt(-11,-18.1,13.5,8.2);
+const handmadeDoors=makeShopDoors(-11,2.25,-22.58);
 signText('HANDMADE','',-11,10.35,-22.62,8.2,1.55);imageLogo('https://d2ol7oe51mr4n9.cloudfront.net/user_3JYbYCHyy3naSeG6RhPtSZPxh49/398594e4-ceb9-452c321-e3b38383fed5.png',6.2,5.8,-11,6.5,-22.6);
 function signText(title,subtitle,x,y,z,w,h){const canvas=document.createElement('canvas');canvas.width=1024;canvas.height=320;const ctx=canvas.getContext('2d');ctx.textAlign='center';ctx.shadowColor='rgba(117,22,69,.3)';ctx.shadowBlur=12;ctx.fillStyle='#a51f61';ctx.font='bold 132px Georgia';ctx.fillText(title,512,145);ctx.shadowBlur=0;ctx.fillStyle='#b98232';ctx.font='bold 48px Georgia';ctx.fillText(subtitle,512,235);const texture=new THREE.CanvasTexture(canvas);texture.colorSpace=THREE.SRGBColorSpace;const material=new THREE.MeshBasicMaterial({map:texture,transparent:true,side:THREE.DoubleSide,toneMapped:false});const mesh=new THREE.Mesh(new THREE.PlaneGeometry(w,h),material);mesh.position.set(x,y,z);scene.add(mesh);}
  // Grand RoseMmoon City entrance gate — open central span keeps the boulevard clear.
