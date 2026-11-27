@@ -102,10 +102,8 @@ block(21,.12,108,M(0xf5e4ee),0,.015,-29);
 // Broad, restrained stone inlays replace the distracting tiny checkerboard tiles.
 const pavingA=M(0xf0d9e7,.88),pavingB=M(0xf5e7ef,.9),pavingGold=M(0xd8b16f,.55,.25);
 for(let z=-77;z<20;z+=12){
- block(19,.025,.12,pavingGold,0,.095,z);
  block(19,.018,5.8,z%24===0?pavingA:pavingB,0,.085,z+5.8);
 }
-for(let x of [-8.8,8.8])block(.12,.035,104,pavingGold,x,.105,-29);
 
 // Decorative background props removed.
 // main RoseMmoon Fashion boutique
@@ -155,7 +153,7 @@ const sidewalkMat=M(0xd98bb8),roadMat=M(0x8f8291,.92),roadLine=M(0xfff5fa,.8),wi
 block(5,.12,88,roadMat,0,.02,-30);
 block(2.4,.16,88,sidewalkMat,-3.7,.1,-30);block(2.4,.16,88,sidewalkMat,3.7,.1,-30);
 // Keep a single straight central boulevard; remove both cross streets and their sidewalks.
-for(let z=-72;z<=8;z+=7)block(.12,.035,3.2,roadLine,0,.105,z);
+// Road markings removed for a clean, uninterrupted road surface.
 function streetLamp(x,z){let pole=new THREE.Mesh(new THREE.CylinderGeometry(.07,.11,4.7,10),gold);pole.position.set(x,2.35,z);scene.add(pole);let side=x<0?1:-1;block(.9,.09,.12,gold,x+side*.35,4.55,z);let shade=new THREE.Mesh(new THREE.SphereGeometry(.3,14,10),M(0xffe6ad,.25,.1));shade.scale.set(1,.55,1);shade.position.set(x+side*.75,4.42,z);scene.add(shade);let light=new THREE.PointLight(0xffd6ec,1.5,8);light.position.copy(shade.position);scene.add(light)}
 for(let z=-68;z<5;z+=12){streetLamp(-4.9,z);streetLamp(4.9,z)}
 function detailedBuilding(x,z,w,h,d,color,style=0){
